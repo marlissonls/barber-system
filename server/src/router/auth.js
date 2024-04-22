@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-import { secret } from "../config/index.js";
+//import { secret } from "../config/index.js";
+const secret = 'secret'
 
 function getTokenFromHeader(req) {
     if (!req.headers.authorization) return null;

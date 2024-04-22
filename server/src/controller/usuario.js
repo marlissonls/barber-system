@@ -1,21 +1,21 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import getConnection from '../database';
+import getConnection from '../database/index.js';
 
 dotenv.config();
 
 class UsuarioController {
-    async cadastrar(req, res) {
-        const { name, telefone, email, senha } = req.body;
+    async register(req, res) {
+        const { nome, telefone, email, senha } = req.body;
     
         try {
             const db = await getConnection();
     
             const hash = await bcrypt.hash(senha, 10);
     
-            const query = 'INSERT INTO usuarios (name, telefone, email, senha) VALUES (?, ?, ?, ?)';
-            const params = [name, telefone, email, hash];
+            const query = 'INSERT INTO usuarios (nome, telefone, email, senha) VALUES (?, ?, ?, ?)';
+            const params = [nome, telefone, email, hash];
     
             db.run(query, params, function(err) {
                 if (err) {
@@ -71,7 +71,7 @@ class UsuarioController {
     
                 delete row.senha;
     
-                const token = jwt.sign({ userId: row.id, name: row.name, email: row.email }, 'SEU_SECRET_KEY', { expiresIn: '1h' });
+                const token = jwt.sign({ userId: row.id, nome: row.nome, email: row.email }, 'SEU_SECRET_KEY', { expiresIn: '1h' });
     
                 res.status(200).json({ message: 'Login bem-sucedido', user: row, token });
             });
@@ -111,7 +111,7 @@ class UsuarioController {
 
     async update(req, res) {
         const userId = req.params.id;
-        const { name, telefone, email, senha } = req.body;
+        const { nome, telefone, email, senha } = req.body;
 
         try {
             const db = await getConnection();
@@ -127,9 +127,9 @@ class UsuarioController {
             let updateFields = '';
             const updateParams = [];
 
-            if (name) {
-                updateFields += 'name = ?, ';
-                updateParams.push(name);
+            if (nome) {
+                updateFields += 'nome = ?, ';
+                updateParams.push(nome);
             }
 
             if (telefone) {
@@ -164,6 +164,37 @@ class UsuarioController {
         }
     };
 
+    async agendamento(req, res) {
+        const userId = req.params.id;
+    
+        try {
+            const db = await getConnection();
+    
+            const query = `
+                SELECT agendamentos.id, cadeira.nome AS nome_cadeira, servicos.nome AS nome_servico, servicos.preco AS preco_servico
+                FROM agendamentos
+                INNER JOIN cadeira ON agendamentos.cadeira_id = cadeiras.id
+                INNER JOIN servicos ON agendamentos.servico_id = servicos.id
+                WHERE agendamentos.usuario_id = ? AND agendamentos.status != "concluído"
+            `;
+    
+            const params = [userId];
+    
+            const agenda = await db.all(query, params);
+    
+            await db.close();
+    
+            if (!agenda.length) {
+                return res.status(404).json({ error: 'Nenhuma agenda pendente encontrada.' });
+            }
+    
+            res.status(200).json(agenda);
+        } catch (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+    
 }
 
 export default UsuarioController;

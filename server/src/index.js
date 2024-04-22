@@ -2,9 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
 import { promisify } from 'util';
-import router from './router';
-import getConnection from './database';
-import { cadeira, servico, usuario, agendamento } from './schema';
+import router from './router/index.js';
+import getConnection from './database/index.js';
+import { cadeira, servico, usuario, agendamento } from './schema/index.js';
 
 const app = express();
 
@@ -15,8 +15,8 @@ app.use('/', router);
 
 const fileExists = promisify(fs.exists);
 
-const initializeDatabase = async () => {
-    const dbPath = './database/db/data.db';
+const dbConnection = async () => {
+    const dbPath = process.cwd()+'/src/database/db/data.db';
 
     const exists = await fileExists(dbPath);
 
@@ -32,9 +32,9 @@ const initializeDatabase = async () => {
     }
 };
 
-const port = 3000;
+const port = 5000;
 
-initializeDatabase().then(() => {
+dbConnection().then(() => {
     app.listen(port, () => {
         console.log(`Servidor rodando na porta ${port}`);
     });
