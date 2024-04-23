@@ -81,19 +81,21 @@ class CadeiraController {
 
     async agendamentos(req, res) {
         const id = req.params.id;
+
+        const query = `
+            SELECT agendamentos.id, usuarios.nome AS nome_usuario, cadeiras.nome AS nome_cadeira, servicos.id AS id_servico, servicos.nome AS nome_servico, servicos.preco AS preco_servico
+            FROM agendamentos
+            INNER JOIN usuarios ON agendamentos.cadeira_id = usuarios.id
+            INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
+            INNER JOIN servicos ON agendamentos.servico_id = servicos.id
+            WHERE agendamentos.usuario_id = ? AND agendamentos.status != "concluído"
+        `;
+        const params = [id];
     
+        const db = await getConnection();
         try {
-            const db = await getConnection();
     
-            const query = `
-                SELECT agendamentos.id, cadeiras.nome AS nome_cadeira, servicos.nome AS nome_servico, servicos.preco AS preco_servico
-                FROM agendamentos
-                INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
-                INNER JOIN servicos ON agendamentos.servico_id = servicos.id
-                WHERE agendamentos.usuario_id = ? AND agendamentos.status != "concluído"
-            `;
-    
-            const params = [id];
+            
     
             const agenda = await db.all(query, params);
     
