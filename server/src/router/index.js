@@ -22,7 +22,6 @@ router.delete('/usuario/:id', usuarioController.remove)
 router.post('/cadeira', cadeiraController.register)
 router.get('/cadeiras', cadeiraController.getAll)
 router.get('/cadeira/:id', cadeiraController.getServicos)
-router.get('/cadeira/:id/agendamentos', cadeiraController.agendamentos)
 router.put('/cadeira/:id', cadeiraController.update)
 router.delete('/cadeira/:id', cadeiraController.remove)
 
@@ -32,7 +31,8 @@ router.put('/servico/:id', servicoController.update)
 router.delete('/servico/:id', servicoController.remove)
 
 router.post('/agendamento', agendamentoController.register)
-router.get('/agendamento/:userId', agendamentoController.get)
+router.get('/agendamento/:userId', agendamentoController.usuarioAgendamentos)
+router.get('/agendamento/:cadeiraId', agendamentoController.cadeiraAgendamentos)
 router.delete('/agendamento/:id', agendamentoController.remove)
 
 export default router;

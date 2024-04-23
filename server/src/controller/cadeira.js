@@ -79,39 +79,6 @@ class CadeiraController {
         }
     }
 
-    async agendamentos(req, res) {
-        const id = req.params.id;
-
-        const query = `
-            SELECT agendamentos.id, usuarios.nome AS nome_usuario, cadeiras.nome AS nome_cadeira, servicos.id AS id_servico, servicos.nome AS nome_servico, servicos.preco AS preco_servico
-            FROM agendamentos
-            INNER JOIN usuarios ON agendamentos.cadeira_id = usuarios.id
-            INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
-            INNER JOIN servicos ON agendamentos.servico_id = servicos.id
-            WHERE agendamentos.usuario_id = ? AND agendamentos.status != "concluído"
-        `;
-        const params = [id];
-    
-        const db = await getConnection();
-        try {
-    
-            
-    
-            const agenda = await db.all(query, params);
-    
-            await db.close();
-    
-            if (!agenda.length) {
-                return res.status(404).json({ error: 'Nenhuma agenda pendente encontrada.' });
-            }
-    
-            res.status(200).json(agenda);
-        } catch (err) {
-            console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
-        }
-    }
-
     async  update(req, res) {
         const id = req.params.id;
         const { nome, status } = req.body;
