@@ -4,38 +4,61 @@ import getConnection from '../database/index.js';
 dotenv.config();
 
 class CadeiraController {
-    async getAll(req, res) {
+    async register(req, res) {
+        const { nome } = req.body;
+    
         try {
             const db = await getConnection();
     
+            const query = 'INSERT INTO cadeiras (nome) VALUES (?)';
+            const params = [nome];
+    
+            db.run(query, params, function(err) {
+                if (err) {
+                    console.error(err.message);
+                    return res.status(500).json({ error: 'Erro interno do servidor' });
+                }
+    
+                console.log(`Serviço registrado com ID: ${this.lastID}`);
+                res.status(200).json({ message: 'Cadeira registrada.' });
+            });
+    
+            await db.close();
+        } catch (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    async getAll(req, res) {
+        const db = await getConnection();
+        try {
             const query = 'SELECT * FROM cadeiras';
     
             const cadeiras = await db.all(query);
-    
             await db.close();
     
             if (!cadeiras.length) {
                 return res.status(404).json({ error: 'Cadeiras não encontradas.' });
             }
 
-            res.status(200).json(cadeiras);
+            return res.status(200).json(cadeiras);
         } catch (err) {
             console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(500).json({ error: 'Erro interno do servidor' });
         }
     };
 
-    async get(req, res) {
+    async getServicos(req, res) {
         const id = req.params.id
 
+        const db = await getConnection();
         try {
-            const db = await getConnection();
-    
             const queryCadeiraInfo = 'SELECT * FROM cadeiras WHERE id = ?';
             const paramsCadeiraInfo = [id]
 
             const cadeira = await db.get(queryCadeiraInfo, paramsCadeiraInfo);
-    
+
             if (!cadeira) {
                 return res.status(404).json({ error: 'Cadeira não encontrada.' });
             }
@@ -87,75 +110,46 @@ class CadeiraController {
         }
     }
 
-    // async cadeira/:id
-
-    // async cadeira/:id/servicos
-
-    async register(req, res) {
-        const { nome } = req.body;
-    
-        try {
-            const db = await getConnection();
-    
-            const query = 'INSERT INTO cadeiras (nome) VALUES (?)';
-            const params = [nome];
-    
-            db.run(query, params, function(err) {
-                if (err) {
-                    console.error(err.message);
-                    return res.status(500).json({ error: 'Erro interno do servidor' });
-                }
-    
-                console.log(`Serviço registrado com ID: ${this.lastID}`);
-                res.status(200).json({ message: 'Cadeira registrada.' });
-            });
-    
-            await db.close();
-        } catch (err) {
-            console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
-        }
-    }
-
-    async update(req, res) {
+    async  update(req, res) {
         const id = req.params.id;
         const { nome, status } = req.body;
 
+        const checkCadeiraQuery = 'SELECT * FROM cadeiras WHERE id = ?';
+        const checkCadeiraParams = [id];
+
+        let updateFields = '';
+        const updateParams = [];
+
+        if (nome) {
+            updateFields += 'nome = ?, ';
+            updateParams.push(nome);
+        }
+
+        if (status) {
+            updateFields += 'status = ?, ';
+            updateParams.push(status);
+        }
+
+        updateFields = updateFields.slice(0, -2);
+
+        const updateQuery = `UPDATE cadeiras SET ${updateFields} WHERE id = ?`;
+        updateParams.push(id);
+        
+        const db = await getConnection();
         try {
-            const db = await getConnection();
 
-            const checkCadeiraQuery = 'SELECT * FROM cadeiras WHERE id = ?';
-            const checkCadeiraParams = [id];
-            const existingCadeira = await db.get(checkCadeiraQuery, checkCadeiraParams);
+            const cadeira = await db.get(checkCadeiraQuery, checkCadeiraParams);
 
-            if (!existingCadeira) {
+            if (!cadeira) {
                 return res.status(404).json({ error: 'Cadeira não encontrado' });
             }
 
-            let updateFields = '';
-            const updateParams = [];
-
-            if (nome) {
-                updateFields += 'nome = ?, ';
-                updateParams.push(nome);
-            }
-
-            if (status) {
-                updateFields += 'status = ?, ';
-                updateParams.push(status);
-            }
-
-            updateFields = updateFields.slice(0, -2);
-
-            const updateQuery = `UPDATE cadeiras SET ${updateFields} WHERE id = ?`;
-            updateParams.push(id);
-
             await db.run(updateQuery, updateParams);
-
             await db.close();
 
             res.status(200).json({ message: 'Cadeiras atualizado com sucesso!' });
         } catch (err) {
+            await db.close();
             console.error(err.message);
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
@@ -164,24 +158,26 @@ class CadeiraController {
     async remove(req, res) {
         const id = req.params.id
 
+        const checkCadeiraQuery = 'SELECT * FROM cadeiras WHERE id = ?';
+        const checkCadeiraParams = [id];
+
+        const removeQuery = `DELETE FROM cadeiras WHERE id = ?`;
+        const removeParams = [id];
+
+        const db = await getConnection();
         try {
-            const checkCadeiraQuery = 'SELECT * FROM cadeiras WHERE id = ?';
-            const checkCadeiraParams = [id];
-            const existingCadeira = await db.get(checkCadeiraQuery, checkCadeiraParams);
+            const cadeira = await db.get(checkCadeiraQuery, checkCadeiraParams);
     
-            if (!existingCadeira) {
-                return res.status(404).json({ error: 'Usuário não encontrado' });
+            if (!cadeira) {
+                return res.status(404).json({ error: 'Cadeira inexistente' });
             }
 
-            const removeQuery = `DELETE FROM cadeiras WHERE id = ?`;
-            const removeParams = [id];
-
             await db.run(removeQuery, removeParams);
-
             await db.close();
 
             res.status(200).json({ message: 'Cadeira deletado com sucesso!' });
         } catch (err) {
+            await db.close();
             console.error(err.message);
             res.status(500).json({ error: 'Erro interno do servidor' });
         }

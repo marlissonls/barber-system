@@ -7,24 +7,18 @@ class ServicoController {
     async register(req, res) {
         const { cadeira_id, nome, preco } = req.body;
     
+        const db = await getConnection();
         try {
-            const db = await getConnection();
-    
             const query = 'INSERT INTO servicos (cadeira_id, nome, preco) VALUES (?, ?, ?)';
             const params = [cadeira_id, nome, preco];
     
-            db.run(query, params, function(err) {
-                if (err) {
-                    console.error(err.message);
-                    return res.status(500).json({ error: 'Erro interno do servidor' });
-                }
-    
-                console.log(`Serviço registrado com ID: ${this.lastID}`);
-                res.status(200).json({ message: 'Serviço registrado.' });
-            });
-    
+            db.run(query, params);
             await db.close();
+
+            console.log(`Serviço registrado.`);
+            res.status(200).json({ message: 'Serviço registrado.' });
         } catch (err) {
+            await db.close();
             console.error(err.message);
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
@@ -33,14 +27,12 @@ class ServicoController {
     async get(req, res) {
         const id = req.params.id;
     
+        const db = await getConnection();
         try {
-            const db = await getConnection();
-    
             const query = 'SELECT * FROM servicos WHERE id = ?';
             const params = [id];
     
             const servico = await db.get(query, params);
-    
             await db.close();
     
             if (!servico) {
@@ -49,6 +41,7 @@ class ServicoController {
     
             res.status(200).json(servico);
         } catch (err) {
+            await db.close();
             console.error(err.message);
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
@@ -58,9 +51,8 @@ class ServicoController {
         const id = req.params.id;
         const { nome, preco } = req.body;
 
+        const db = await getConnection();
         try {
-            const db = await getConnection();
-
             const checkServicoQuery = 'SELECT * FROM servicos WHERE id = ?';
             const checkServicoParams = [id];
             const existingServico = await db.get(checkServicoQuery, checkServicoParams);
@@ -88,11 +80,11 @@ class ServicoController {
             updateParams.push(id);
 
             await db.run(updateQuery, updateParams);
-
             await db.close();
 
             res.status(200).json({ message: 'Serviço atualizado com sucesso!' });
         } catch (err) {
+            await db.close();
             console.error(err.message);
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
@@ -101,6 +93,7 @@ class ServicoController {
     async remove(req, res) {
         const id = req.params.id
 
+        const db = await getConnection();
         try {
             const checkServicoQuery = 'SELECT * FROM servicos WHERE id = ?';
             const checkServicoParams = [id];
@@ -114,16 +107,15 @@ class ServicoController {
             const removeParams = [id];
 
             await db.run(removeQuery, removeParams);
-
             await db.close();
 
             res.status(200).json({ message: 'Serviço deletado com sucesso!' });
         } catch (err) {
+            await db.close();
             console.error(err.message);
             res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
-    
 }
 
 export default ServicoController;

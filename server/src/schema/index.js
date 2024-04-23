@@ -26,7 +26,8 @@ export async function usuario(db) {
             nome TEXT NOT NULL,
             telefone TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE,
-            senha TEXT NOT NULL
+            senha TEXT NOT NULL,
+            tipo TEXT DEFAULT 'cliente'
         )
     `);
 }
