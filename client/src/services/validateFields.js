@@ -21,6 +21,32 @@ function validateName(name) {
   return message;
 }
 
+function isValidTelefoneFormat(phoneNumber) {
+  // Regex para validar telefone com exatamente 10 números
+  const phoneRegex = /^\d{10}$/;
+  return phoneRegex.test(phoneNumber);
+}
+
+function validateTelefone(phoneNumber) {
+  let message = "";
+  let phoneValue;
+
+  if (phoneNumber) {
+    phoneValue = phoneNumber.trim().replace(/\D/g, ''); // Removendo caracteres não numéricos
+  } else {
+    return message;
+  }
+
+  if (!phoneValue) {
+    message = "Telefone é requerido!";
+  } else if (phoneValue.length !== 10) {
+    message = "Telefone deve conter exatamente 10 números!";
+  } else if (!isValidTelefoneFormat(phoneValue)) {
+    message = "Telefone inválido!";
+  }
+  
+  return message;
+}
 
 function isValidEmailFormat(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -87,6 +113,7 @@ function validateCardInputs(text) {
 
 export {
   validateName,
+  validateTelefone,
   validateEmail,
   validatePosition,
   validatePassword,

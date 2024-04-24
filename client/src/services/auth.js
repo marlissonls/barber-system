@@ -1,12 +1,11 @@
 const TOKEN = "@TOKEN";
 const ID = "@ID";
 const USERNAME = "@USERNAME";
+const PHONE = "@PHONE"
 const EMAIL = "@EMAIL";
-const ROLE = "@ROLE";
+const TIPO = "@TIPO";
 const PHOTO = "@PHOTO";
 const POSITION = "@POSITION";
-const COMPANY = "@COMPANY";
-const COMPANYID = "@COMPANYID";
 
 function get_token() {
     return localStorage.getItem(TOKEN)
@@ -29,6 +28,13 @@ function set_username(un) {
     localStorage.setItem(USERNAME, un)
 }
 
+function get_telefone() {
+    return localStorage.getItem(PHONE)
+}
+function set_telefone(ph) {
+    localStorage.setItem(PHONE, ph)
+}
+
 function get_email() {
     return localStorage.getItem(EMAIL)
 }
@@ -36,11 +42,11 @@ function set_email(em) {
     localStorage.setItem(EMAIL, em)
 }
 
-function get_role() {
-    return localStorage.getItem(ROLE)
+function get_tipo() {
+    return localStorage.getItem(TIPO)
 }
-function set_role(rl) {
-    localStorage.setItem(ROLE, rl)
+function set_tipo(rl) {
+    localStorage.setItem(TIPO, rl)
 }
 
 function get_photo_url() {
@@ -57,40 +63,24 @@ function set_position(pt) {
     localStorage.setItem(POSITION, pt)
 }
 
-function get_company() {
-    return localStorage.getItem(COMPANY)
-}
-function set_company(cp) {
-    localStorage.setItem(COMPANY, cp)
-}
-
-function get_company_id() {
-    return localStorage.getItem(COMPANYID)
-}
-function set_company_id(cpid) {
-    localStorage.setItem(COMPANYID, cpid)
-}
-
 function isAuthenticated() {
     if (get_token()) return true;
     return false;
 }
 
 function isAdmin() {
-    if (get_role() === 'admin') return true;
+    if (get_tipo() === 'admin') return true;
     return false;
 }
 
 function logout() {
-    localStorage.removeItem(EMAIL)
-    localStorage.removeItem(TOKEN)
-    localStorage.removeItem(USERNAME)
-    localStorage.removeItem(ID)
-    localStorage.removeItem(ROLE)
-    localStorage.removeItem(PHOTO)
-    localStorage.removeItem(POSITION)
-    localStorage.removeItem(COMPANY)
-    localStorage.removeItem(COMPANYID)
+    localStorage.removeItem(TOKEN);
+    localStorage.removeItem(ID);
+    localStorage.removeItem(USERNAME);
+    localStorage.removeItem(PHONE);
+    localStorage.removeItem(EMAIL);
+    localStorage.removeItem(TIPO);
+    // localStorage.removeItem(PHOTO);
 }
 
 export {
@@ -100,18 +90,16 @@ export {
     set_email,
     get_username,
     set_username,
+    get_telefone,
+    set_telefone,
     get_id,
     set_id,
-    get_role,
-    set_role,
+    get_tipo,
+    set_tipo,
     get_photo_url,
     set_photo_url,
     get_position,
     set_position,
-    get_company,
-    set_company,
-    get_company_id,
-    set_company_id,
     isAuthenticated,
     isAdmin,
     logout,

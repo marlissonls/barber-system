@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useSnackbar } from "notistack";
-import { get_company_id } from "../../services/auth";
+// import { get_company_id } from "../../services/auth";
 import api from "../../services/api";
 
 
@@ -35,15 +35,15 @@ function Agendamentos() {
       }
     }
 
-    const company_id = get_company_id();
-    if (company_id == "null") return;
+    // const company_id = get_company_id();
+    // if (company_id == "null") return;
 
-    if (!refLoading.current) {
-      if (company_id) {
-        refLoading.current = true;
-        fetchCompanyData(company_id);
-      }
-    }
+    // if (!refLoading.current) {
+    //   if (company_id) {
+    //     refLoading.current = true;
+    //     fetchCompanyData(company_id);
+    //   }
+    // }
   }, []);
 
   return (

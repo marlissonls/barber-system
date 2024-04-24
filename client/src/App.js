@@ -1,22 +1,22 @@
 import React from 'react';
-
+import { SnackbarProvider } from 'notistack';
 import { createBrowserRouter, RouterProvider, redirect } from "react-router-dom";
+
 import LandingPage from "./pages/landingPage";
 import Agendamentos from "./pages/agendamentos";
 import Cadeira from "./pages/cadeira";
 import Cadeiras from "./pages/cadeiras";
 import Servico from "./pages/servico";
 import Agendamento from "./pages/agendamento";
-import { SnackbarProvider } from 'notistack';
-//import { isAdmin, isAuthenticated } from "./services/auth";
+import { isAdmin, isAuthenticated } from "./services/auth";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <LandingPage />,
         loader: async () => {
-        // if (isAuthenticated() && !isAdmin()) throw new redirect("/home");
-        // if (isAuthenticated() && isAdmin()) throw new redirect("/panel");
+        if (isAuthenticated() && !isAdmin()) throw new redirect("/cadeiras");
+        if (isAuthenticated() && isAdmin()) throw new redirect("/admin");
         return {}
         }
     },
@@ -24,8 +24,8 @@ const router = createBrowserRouter([
         path: "/cadeiras",
         element: <Cadeiras />,
         loader: async () => {
-        // if (!isAuthenticated()) throw new redirect("/");
-        // if (isAdmin()) throw new redirect("/panel");
+        if (!isAuthenticated()) throw new redirect("/");
+        if (isAdmin()) throw new redirect("/admin");
         return {}
         }
     },
@@ -33,7 +33,7 @@ const router = createBrowserRouter([
         path: "/cadeira/:id",
         element: <Cadeira />,
         loader: async () => {
-        // if (!isAuthenticated()) throw new redirect("/");
+        if (!isAuthenticated()) throw new redirect("/");
         return {}
         }
     },
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         path: "/agendamentos",
         element: <Agendamentos />,
         loader: async () => {
-        // if (!isAuthenticated()) throw new redirect("/");
+        if (!isAuthenticated()) throw new redirect("/");
         return {}
         }
     },
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
         path: "/agendamentos/:id",
         element: <Agendamento />,
         loader: async () => {
-        // if (!isAuthenticated()) throw new redirect("/");
+        if (!isAuthenticated()) throw new redirect("/");
         return {}
         }
     },
@@ -57,7 +57,7 @@ const router = createBrowserRouter([
         path: "/servico/:id",
         element: <Servico />,
         loader: async () => {
-        // if (!isAuthenticated()) throw new redirect("/");
+        if (!isAuthenticated()) throw new redirect("/");
         return {}
         }
     }

@@ -13,7 +13,7 @@ const agendamentoController = new AgendamentoController();
 
 const router = express.Router()
 
-router.post('/usuario', usuarioController.register)
+router.post('/register', usuarioController.register)
 router.post('/login', usuarioController.login)
 router.get('/usuario/:id', usuarioController.get)
 router.put('/usuario/:id', usuarioController.update)

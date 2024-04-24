@@ -40,7 +40,7 @@ function Cadeiras(props) {
   return <div className='body'>
     <h1>Cadeiras Disponíveis</h1>
     <div>
-      {data.map(item => <div>
+      {data.map(item => <div key={item.id}>
         <h3>{item.nome}</h3>
         <button
           type='button'

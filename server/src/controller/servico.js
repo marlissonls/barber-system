@@ -16,11 +16,11 @@ class ServicoController {
             await db.close();
 
             console.log(`Serviço registrado.`);
-            res.status(200).json({ message: 'Serviço registrado.' });
+            res.status(200).json({ status: true, message: 'Serviço registrado.' });
         } catch (err) {
             await db.close();
             console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+            res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     }
 
@@ -33,17 +33,24 @@ class ServicoController {
             const params = [id];
     
             const servico = await db.get(query, params);
-            await db.close();
-    
+
             if (!servico) {
-                return res.status(404).json({ error: 'Serviço inexistente.' });
+                return res.status(200).json({ status: false, message: 'Serviço inexistente.' });
             }
+
+            const queryCadeira = 'SELECT nome FROM cadeiras WHERE id = ?';
+            const cadeira_id = [servico.cadeira_id];
+
+            const nome_cadeira = await db.get(queryCadeira, cadeira_id);
+            await db.close();
+
+            servico.nome_cadeira = nome_cadeira.nome
     
-            res.status(200).json(servico);
+            return res.status(200).json(servico);
         } catch (err) {
             await db.close();
             console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+            res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     };
 
@@ -58,7 +65,7 @@ class ServicoController {
             const existingServico = await db.get(checkServicoQuery, checkServicoParams);
 
             if (!existingServico) {
-                return res.status(404).json({ error: 'Serviço não encontrado' });
+                return res.status(200).json({ status: false, message: 'Serviço não encontrado' });
             }
 
             let updateFields = '';
@@ -86,7 +93,7 @@ class ServicoController {
         } catch (err) {
             await db.close();
             console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+            res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     };
 
@@ -100,7 +107,7 @@ class ServicoController {
             const existingServico = await db.get(checkServicoQuery, checkServicoParams);
     
             if (!existingServico) {
-                return res.status(404).json({ error: 'Serviço não encontrado' });
+                return res.status(200).json({ status: false, message: 'Serviço não encontrado' });
             }
 
             const removeQuery = `DELETE FROM servicos WHERE id = ?`;
@@ -113,7 +120,7 @@ class ServicoController {
         } catch (err) {
             await db.close();
             console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+            res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     }
 }

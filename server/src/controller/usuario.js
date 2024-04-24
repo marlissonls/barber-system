@@ -19,17 +19,17 @@ class UsuarioController {
             await db.close();
             
             console.log(`Usuário cadastrado.`);
-            return res.status(200).json({ message: 'Usuário Cadastrado!' });  
+            return res.status(200).json({ message: 'Cadastro realizado!' });  
         } catch (err) {
             await db.close();
             console.error(err.message);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(200).json({ error: 'Houve um erro na solicitação.' });
         }
     }
 
     async login(req, res) {
         const { identificador, senha } = req.body;
-
+        
         const isEmail = identificador.includes('@');
     
         let query;
@@ -49,24 +49,24 @@ class UsuarioController {
             await db.close();
 
             if (!usuario) {
-                return res.status(400).json({ error: 'Credenciais inválidas' });
+                return res.status(200).json({ status: false, message: 'E-mail ou Telefone inválido.' });
             }
-
+            
             const senhaValida = await bcrypt.compare(senha, usuario.senha);
-
+            console.log(senhaValida, 'olá')
             if (!senhaValida) {
-                return res.status(400).json({ error: 'Credenciais inválidas' });
+                return res.status(200).json({ status: false, message: 'Senha inválida.' });
             }
 
             delete usuario.senha;
+            const token = jwt.sign({ id: usuario.id, nome: usuario.nome, email: usuario.email, telefone: usuario.telefone, tipo: usuario.tipo }, 'SEU_SECRET_KEY', { expiresIn: '480h' });
+            usuario.token = token
 
-            const token = jwt.sign({ userId: usuario.id, nome: usuario.nome, email: usuario.email, telefone: usuario.telefone, tipo: usuario.tipo }, 'SEU_SECRET_KEY', { expiresIn: '480h' });
-
-            return res.status(200).json({ message: 'Login bem-sucedido', usuario, token });
+            return res.status(200).json({ status: true, message: 'Login bem-sucedido', usuario });
         } catch (err) {
             await db.close();
             console.error(err.message);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     }
 
@@ -82,16 +82,16 @@ class UsuarioController {
             await db.close();
     
             if (!usuario) {
-                return res.status(404).json({ error: 'Usuário não encontrado' });
+                return res.status(200).json({ status: false, message: 'Usuário não encontrado' });
             }
 
             delete usuario.senha;
 
-            return res.status(200).json({ usuario: usuario });
+            return res.status(200).json({ status: true, message: '', usuario: usuario });
         } catch (err) {
             await db.close();
             console.error(err.message);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     };
 
@@ -133,7 +133,7 @@ class UsuarioController {
             const existingUser = await db.get(checkUserQuery, checkUserParams);
 
             if (!existingUser) {
-                return res.status(404).json({ error: 'Usuário não encontrado' });
+                return res.status(200).json({ status: false, message: 'Usuário não encontrado' });
             }
 
             const updateQuery = `UPDATE usuarios SET ${updateFields} WHERE id = ?`;
@@ -142,11 +142,11 @@ class UsuarioController {
             await db.run(updateQuery, updateParams);
             await db.close();
 
-            return res.status(200).json({ message: 'Usuário atualizado com sucesso!' });
+            return res.status(200).json({ status: true, message: 'Dados atualizados!' });
         } catch (err) {
             await db.close();
             console.error(err.message);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     };
 
@@ -159,7 +159,7 @@ class UsuarioController {
             const existingUser = await db.get(checkUserQuery, checkUserParams);
 
             if (!existingUser) {
-                return res.status(404).json({ error: 'Usuário não encontrado' });
+                return res.status(200).json({ status: false, message: 'Usuário não encontrado' });
             }
 
             const removeQuery = `DELETE FROM usuarios WHERE id = ?`;
@@ -168,11 +168,11 @@ class UsuarioController {
             await db.run(removeQuery, removeParams);
             await db.close();
 
-            return res.status(200).json({ message: 'Usuário deletado com sucesso!' });
+            return res.status(200).json({ status: true, message: 'Usuário deletado com sucesso!' });
         } catch (err) {
             await db.close();
             console.error(err.message);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     }
 }

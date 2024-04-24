@@ -11,7 +11,6 @@ import { useParams, useNavigate } from "react-router-dom";
 
 async function getCadeiraInfo(id) {
   const response = await api.get(`/cadeira/${id}`)
-  console.log(response.data)
   return response.data
 }
 
@@ -54,6 +53,13 @@ function DashboardCards(props) {
   }, [id]);
  
   return <div className='body'>
+    <div>
+      <button
+        type='button'
+        onClick={() => navigate(`/cadeiras`)}
+      >
+        Voltar</button>
+    </div>
     <h1>{data.cadeira.nome}</h1>
     <h2>Lista de serviços</h2>
     <div>
