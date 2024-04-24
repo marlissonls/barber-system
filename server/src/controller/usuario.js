@@ -53,7 +53,7 @@ class UsuarioController {
             }
             
             const senhaValida = await bcrypt.compare(senha, usuario.senha);
-            console.log(senhaValida, 'olá')
+
             if (!senhaValida) {
                 return res.status(200).json({ status: false, message: 'Senha inválida.' });
             }
