@@ -5,7 +5,6 @@ import api from '../../services/api';
 
 async function getServicoInfo(id) {
   const response = await api.get(`/servico/${id}`)
-  console.log(response.data)
   return response.data
 }
 
@@ -95,10 +94,11 @@ function Servico(props) {
   const navigate = useNavigate()
 
   const refLoading = useRef(false)
-  const [data, setData] = useState({});
+  const [data, setData] = useState({ cadeira: {}, servico: {} });
   const [dia, setDia] = useState(new Date().getDate());
   const [mes, setMes] = useState(new Date().getMonth());
   const [ano, setAno] = useState(new Date().getFullYear());
+  const [horaSelecionada, setHoraSelecionada] = useState(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -136,15 +136,15 @@ function Servico(props) {
     <div>
       <button
         type='button'
-        onClick={() => navigate(`/cadeira/${data.cadeira_id}`)}
+        onClick={() => navigate(`/cadeira/${data.cadeira.id}`)}
       >
         Voltar
       </button>
     </div>
-    <h1>{data.nome_cadeira}</h1>
+    <h1>{data.cadeira.nome}</h1>
     <div>
-      <span>{data.nome}</span>
-      <span>{formatMoeda(data.preco)}</span>
+      <span>{data.servico.nome}</span>
+      <span>{formatMoeda(data.servico.preco)}</span>
     </div>
     <div class='mes-slider'>
       <button
@@ -178,22 +178,48 @@ function Servico(props) {
         próximo
       </button>
     </div>
-    <table>
-      <tr>
-        <th>Dom</th>
-        <th>Seg</th>
-        <th>Ter</th>
-        <th>Qua</th>
-        <th>Qui</th>
-        <th>Sex</th>
-        <th>Sáb</th>
-      </tr>
-      {calendario.map(item => <tr>{item.map(item2 => {
-        if (item2 === 0) return <td></td>
-        else return <td style={dia === item2 ? {color: 'blue'} : {}} onClick={() => {setDia(item2)}}>{item2}</td>
-      })}</tr>)}
-    </table>
+    <div className='calendario-box'>
+      <table>
+        <tr>
+          <th>Dom</th>
+          <th>Seg</th>
+          <th>Ter</th>
+          <th>Qua</th>
+          <th>Qui</th>
+          <th>Sex</th>
+          <th>Sáb</th>
+        </tr>
+        {calendario.map(item => <tr>{item.map(item2 => {
+          if (item2 === 0) return <td></td>
+          else return <td className={dia === item2 ? 'dia-selecionado' : 'dia-normal'} onClick={() => {setDia(item2)}}>{item2}</td>
+        })}</tr>)}
+      </table>
+    </div>
+    <div className='horas-box'>
+      {Object.keys(data.cadeira).map(hora => {
+        if (data.cadeira[hora] === 1 && (hora !== 'id' && hora !== 'folga')) {
+          const horaFormatada = hora.length === 6 ? hora.replace('hora', '')+'h' : '0'+hora.replace('hora', '')+'h';
+          return (
+            <div 
+              key={hora}
+              className={`vha-center ${horaSelecionada !== null && horaFormatada === horaSelecionada.target.innerText ? 'hora-selecionada hora-normal' : 'hora-normal'}`}
+              onClick={(hora) => setHoraSelecionada(hora)}
+            >
+              {horaFormatada}
+            </div>
+          );
+        }
+        return null;
+      })}
+    </div>
   </div>
 }
 
 export default Servico;
+
+// barbeiro
+//Dia de folga da cadeira Select
+//checkbox para marcar a hora que trabalha
+
+//agendamento/:cadeiraID/:dia/:mes/:ano
+//servico/:id retornar horas de trabalho e dia de folga

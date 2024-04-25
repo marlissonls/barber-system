@@ -20,10 +20,15 @@ export async function cadeira(db) {
     `);
 }
 
-
+export async function cadeira2(db) {
+    await db.exec(`
+        ALTER TABLE cadeiras ADD hora22 INTEGER DEFAULT 0;
+        ALTER TABLE cadeiras ADD hora23 INTEGER DEFAULT 0;
+    `);
+}
 
 const dbPath = process.cwd()+'/src/database/db/data.db';
 const db = await getConnection(dbPath);
-await cadeira(db);
+await cadeira2(db);
 await db.close();
 

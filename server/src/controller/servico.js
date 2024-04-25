@@ -26,27 +26,23 @@ class ServicoController {
 
     async get(req, res) {
         const id = req.params.id;
-    
+
+        const servicoQuery = 'SELECT * FROM servicos WHERE id = ?';
+        const servicoParams = [id];
+        const cadeiraQuery = 'SELECT * FROM cadeiras WHERE id = ?';
+
         const db = await getConnection();
         try {
-            const query = 'SELECT * FROM servicos WHERE id = ?';
-            const params = [id];
-    
-            const servico = await db.get(query, params);
-
+            const servico = await db.get(servicoQuery, servicoParams);
             if (!servico) {
                 return res.status(200).json({ status: false, message: 'Serviço inexistente.' });
             }
 
-            const queryCadeira = 'SELECT nome FROM cadeiras WHERE id = ?';
-            const cadeira_id = [servico.cadeira_id];
-
-            const nome_cadeira = await db.get(queryCadeira, cadeira_id);
+            const cadeiraParams = [servico.cadeira_id];
+            const cadeira = await db.get(cadeiraQuery, cadeiraParams);
             await db.close();
 
-            servico.nome_cadeira = nome_cadeira.nome
-
-            return res.status(200).json(servico);
+            return res.status(200).json({ cadeira, servico });
         } catch (err) {
             await db.close();
             console.error(err.message);
