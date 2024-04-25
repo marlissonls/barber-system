@@ -45,7 +45,7 @@ class ServicoController {
             await db.close();
 
             servico.nome_cadeira = nome_cadeira.nome
-    
+
             return res.status(200).json(servico);
         } catch (err) {
             await db.close();

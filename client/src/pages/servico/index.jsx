@@ -34,7 +34,7 @@ function calendarioFunction(mes, ano) {
   const diaSemana = primeiroDiaMes.getDay()
   const numDias = numDiasMes - (7 - diaSemana)
   const numLinhas = parseInt(numDias/7, 10)
-  console.log(numDias, numLinhas)
+
   let diaAtual = 0;
   let dias = [];
 
@@ -131,7 +131,7 @@ function Servico(props) {
   }, [id]);
 
   const calendario = calendarioFunction(mes, ano);
-  console.log(calendario)
+
   return <div className='body'>
     <div>
       <button

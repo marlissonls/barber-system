@@ -2,4 +2,181 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+/* POSICIONAMENTOS */
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.gap-20 {
+    gap: 20px;
+}
+
+.gap-30 {
+    gap: 30px;
+}
+
+.justify-space-btw {
+    justify-content: space-between;
+}
+
+.justify-left {
+    justify-content: left;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-right {
+    justify-content: right;
+}
+
+.align-top {
+    align-items: start;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.align-bottom {
+    align-items: end;
+}
+
+.vha-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.body {
+    height: 100vh;
+    background-color: #5bbad4;
+    padding: 20px;
+}
+
+/* LOGIN CADASTRO */
+
+.logo-box {
+    height: 200px;
+    padding: 10px;
+}
+
+.logo {
+    width: 300px;
+    height: 70px;
+}
+
+.input {
+    height: 50px;
+    width: 80%;
+    border-radius: 25px;
+    border: 0;
+    background-color: #7dcfe5;
+    padding: 0 20px;
+}
+
+.input:focus {
+    outline: none;
+}
+
+.button {
+    height: 50px;
+    width: 80%;
+    border-radius: 25px;
+    border: 0;
+    background-color: #1a6f89;
+    padding: 0 20px;
+
+    color: #ddd;
+    font-size: 17px;
+}
+
+.login-cadastro-toggle {
+    color: #1a6f89;
+    font-size: 15px;
+}
+
+.login-cadastro-toggle span {
+    font-weight: bold;
+}
+
+.message-box {
+    height: 20px;
+}
+
+.empty-fields {
+    
+    color: #ee3355;
+    font-size: 17px;
+}
+
+/* CADEIRAS */
+
+.page-title {
+    color: #fff
+
+}
+
+.cadeira-box {
+    height: 100px;
+    width: calc(100% - 10px);
+    background-color: white;
+    border-radius: 20px;
+}
+
+.cadeira-servicos {
+    height: 100px;
+    padding: 10px;
+}
+
+.cadeira-servicos h2,
+.cadeira-servicos h3 {
+    color: #fff
+}
+
+.selection-btn {
+    width: 100px;
+    height: 30px;
+    background-color: white;
+    border-radius: 10px;
+    border: 2px solid lightblue;
+    font-size: 15px
+}
+
+.selection-btn-2 {
+    width: 100px;
+    height: 40px;
+    background-color: #49a5c2;
+    border-radius: 10px;
+    border: 2px solid lightblue;
+
+    font-weight: bold;
+    font-size: 15px;
+    color: #fff;
+}
+
+.servicos-list {
+    height: 70%;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px 5px;
+}
+
+
+
+/* LARGURAS */
+
+.w100 {
+    width: 100%
 }

@@ -38,17 +38,21 @@ function Cadeiras(props) {
   }, []);
 
   return <div className='body'>
-    <h1>Cadeiras Disponíveis</h1>
-    <div>
-      {data.map(item => <div key={item.id}>
+    <div className='flex-column align-center'>
+      <h3 className='page-title'>Selecione uma cadeira</h3>
+      <h3 className='page-title'>e agende um horário</h3>
+    </div>
+    <div className='flex-column gap-30 align-center' style={{marginTop: '50px'}}>
+      {data.map(item => <div className='cadeira-box flex-column gap-20 align-center justify-center' key={item.id}>
         <h3>{item.nome}</h3>
         <button
+          className='selection-btn'
           type='button'
           onClick={() => {
             navigate(`/cadeira/${item.id}`)
           }}
         >
-          Ver perfil
+          Ver Perfil
         </button>
       </div>)}
     </div>

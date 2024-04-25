@@ -19,11 +19,11 @@ class UsuarioController {
             await db.close();
             
             console.log(`Usuário cadastrado.`);
-            return res.status(200).json({ message: 'Cadastro realizado!' });  
+            return res.status(200).json({ status: true, message: 'Cadastro realizado!' });  
         } catch (err) {
             await db.close();
             console.error(err.message);
-            return res.status(200).json({ error: 'Houve um erro na solicitação.' });
+            return res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     }
 

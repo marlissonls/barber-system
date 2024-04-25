@@ -16,66 +16,57 @@ class CadeiraController {
             db.run(query, params, function(err) {
                 if (err) {
                     console.error(err.message);
-                    return res.status(500).json({ error: 'Erro interno do servidor' });
+                    return res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
                 }
     
                 console.log(`Serviço registrado com ID: ${this.lastID}`);
-                res.status(200).json({ message: 'Cadeira registrada.' });
+                res.status(200).json({ status: true, message: 'Cadeira registrada.' });
             });
     
             await db.close();
         } catch (err) {
             console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+            res.status(200).json({ status: false, message: 'Houve um erro na solicitação' });
         }
     }
 
     async getAll(req, res) {
+        const query = 'SELECT * FROM cadeiras';
+
         const db = await getConnection();
         try {
-            const query = 'SELECT * FROM cadeiras';
-    
             const cadeiras = await db.all(query);
             await db.close();
-    
-            if (!cadeiras.length) {
-                return res.status(404).json({ error: 'Cadeiras não encontradas.' });
-            }
 
             return res.status(200).json(cadeiras);
         } catch (err) {
             console.error(err.message);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(200).json({ status: true, message: 'Houve um erro na solicitação' });
         }
     };
 
     async getServicos(req, res) {
         const id = req.params.id
 
+        const queryCadeiraInfo = 'SELECT * FROM cadeiras WHERE id = ?';
+        const paramsCadeiraInfo = [id]
+        const queryServicos = 'SELECT * FROM servicos WHERE cadeira_id = ?';
+        const paramsServicos = [id]
+
         const db = await getConnection();
         try {
-            const queryCadeiraInfo = 'SELECT * FROM cadeiras WHERE id = ?';
-            const paramsCadeiraInfo = [id]
-
             const cadeira = await db.get(queryCadeiraInfo, paramsCadeiraInfo);
-
             if (!cadeira) {
-                return res.status(404).json({ error: 'Cadeira não encontrada.' });
+                return res.status(200).json({ status: false, message: 'Cadeira não encontrada.' });
             }
 
-            const queryServicos = 'SELECT * FROM servicos WHERE cadeira_id = ?';
-
-            const servicos = await db.all(queryServicos, paramsCadeiraInfo);
-    
-            if (!servicos.length) {
-                return res.status(404).json({ error: 'Serviços não encontrados.' });
-            }
-
+            const servicos = await db.all(queryServicos, paramsServicos);
             await db.close();
+
             res.status(200).json({cadeira: cadeira, servicos: servicos});
         } catch (err) {
             console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+            res.status(200).json({ status: false, message: 'Houve um erro na solicitação' });
         }
     }
 
@@ -110,17 +101,17 @@ class CadeiraController {
             const cadeira = await db.get(checkCadeiraQuery, checkCadeiraParams);
 
             if (!cadeira) {
-                return res.status(404).json({ error: 'Cadeira não encontrado' });
+                return res.status(200).json({ status: false, message: 'Cadeira não encontrada.' });
             }
 
             await db.run(updateQuery, updateParams);
             await db.close();
 
-            res.status(200).json({ message: 'Cadeiras atualizado com sucesso!' });
+            res.status(200).json({ status: true, message: 'Dados atualizados com sucesso!' });
         } catch (err) {
             await db.close();
             console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+            res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     };
 
@@ -138,17 +129,17 @@ class CadeiraController {
             const cadeira = await db.get(checkCadeiraQuery, checkCadeiraParams);
     
             if (!cadeira) {
-                return res.status(404).json({ error: 'Cadeira inexistente' });
+                return res.status(200).json({ status: false, message: 'Cadeira inexistente' });
             }
 
             await db.run(removeQuery, removeParams);
             await db.close();
 
-            res.status(200).json({ message: 'Cadeira deletado com sucesso!' });
+            res.status(200).json({ status: true, message: 'Cadeira deletado com sucesso!' });
         } catch (err) {
             await db.close();
             console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+            res.status(200).json({ status: false, message: 'Houve um erro na solicitação' });
         }
     }
 }

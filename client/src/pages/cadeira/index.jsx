@@ -14,7 +14,16 @@ async function getCadeiraInfo(id) {
   return response.data
 }
 
-function DashboardCards(props) {
+function formatMoeda(valor) {
+  return valor !== null && valor !== undefined
+    ? valor.toLocaleString('pt-br', {
+        style: 'currency',
+        currency: 'BRL',
+      })
+    : '';
+}
+
+function Cadeira(props) {
 
   const { id } = useParams();
   const navigate = useNavigate()
@@ -52,31 +61,35 @@ function DashboardCards(props) {
     fetchCadeirasInfo()
   }, [id]);
  
-  return <div className='body'>
-    <div>
-      <button
-        type='button'
-        onClick={() => navigate(`/cadeiras`)}
-      >
-        Voltar</button>
+  return <div className='body flex-column gap-30'>
+      <div className='cadeira-servicos flex-column gap-20 justify-center align-center'>
+        <h2>{data.cadeira.nome}</h2>
+        <h3>Serviços:</h3>
+      </div>
+      <div className='servicos-list flex-column gap-20'>
+      {data.servicos.length > 0 ? (
+        data.servicos.map(item => <div className='flex-row justify-space-btw' key={item.id}>
+            <div style={{width: '70%', paddingLeft: '10px'}}>
+              <p>{item.nome}</p>
+              <p>{formatMoeda(item.preco)}</p>
+            </div>
+            <button
+              className='selection-btn-2'
+              type='button'
+              onClick={() => navigate(`/servico/${item.id}`)}
+            >
+              Agendar
+            </button>
+          </div>
+        )
+      ) : (
+        <p>Nenhum serviço disponível no momento.</p>
+      )}
     </div>
-    <h1>{data.cadeira.nome}</h1>
-    <h2>Lista de serviços</h2>
     <div>
-      {data.servicos.map(item => {
-        return <div key={item.id}>
-          <p>{item.nome}</p>
-          <p>{item.preco}</p>
-          <button
-            type='button'
-            onClick={() => navigate(`/servico/${item.id}`)}
-          >
-            Agendar
-          </button>
-        </div>
-      })}
+      <button className='button w100' type='button' onClick={() => navigate(`/cadeiras`)}>Voltar</button>
     </div>
   </div>
 }
 
-export default DashboardCards;
+export default Cadeira;

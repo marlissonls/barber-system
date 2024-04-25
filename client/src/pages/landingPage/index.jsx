@@ -4,6 +4,7 @@ import { useSnackbar } from 'notistack';
 import { validateName, validateTelefone, validateEmail, validatePassword } from '../../services/validateFields';
 import { set_token, set_id, set_username, set_telefone, set_email, } from '../../services/auth';
 import api from '../../services/api';
+import logo from '../../assets/logo.png';
 
 function LandingPage(props) {
 
@@ -130,14 +131,15 @@ function LandingPage(props) {
   /////////////////////////////
 
   return <div className='body'>
+    <div className='logo-box vha-center'>
+      <img className='logo' src={logo} alt='Logo' />
+    </div>
     <div className='profile-container-topbar'>
-      {isLoginFormVisible && <form className='user-form' onSubmit={handleLoginSubmit}>
-        <h3 className='form-title'>Entre</h3>
-
+      {isLoginFormVisible && <form className='form flex-column align-center gap-20' onSubmit={handleLoginSubmit}>
         <input
           className="input"
           type="text"
-          placeholder="Email ou Telefone"
+          placeholder="Digite seu e-mail ou nº telefone"
           value={identificador || ""}
           onChange={(e) => setIdenficador(e.target.value)}
         />
@@ -145,35 +147,31 @@ function LandingPage(props) {
         <input
           className="input"
           type="password"
-          placeholder="Senha"
+          placeholder="******"
           value={password || ""}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <div className='button-container'>
-          <button
-            className='button submit-button'
-            type="submit" 
-            disabled={hasLoginErrors || identificador === '' || password === ''}>
-            Entrar
-          </button>
+        <button
+          className='button submit-button'
+          type="submit" 
+          disabled={hasLoginErrors || identificador === '' || password === ''}>
+          LOGIN
+        </button>
 
-          <button
-            className='button return-button'
-            onClick={() => {handleLoginForm(); handleResgiterForm()}}
-          >
-            Cadastre-se
-          </button>
+        <div className='message-box'>
+          {(loginErrors[0] && <div className="empty-fields">{loginErrors[0]}</div>) || 
+          (loginErrors[1] && <div className="empty-fields">{loginErrors[1]}</div>) ||
+          ((identificador === '' || password === '') && <div className="empty-fields">Há campos vazios</div>)}
         </div>
+        
 
-        {(loginErrors[0] && <div className="error-message">{loginErrors[0]}</div>) || 
-        (loginErrors[1] && <div className="error-message">{loginErrors[1]}</div>) ||
-        ((identificador === '' || password === '') && <div className="error-message">Há campos vazios</div>)}
+        <span className='login-cadastro-toggle'>
+          Já possui uma conta? <span onClick={() => {handleLoginForm(); handleResgiterForm()}}>Faça Login</span>
+        </span>
       </form>}
 
-      {isRegisterFormVisible && <form className='user-form' onSubmit={handleRegisterSubmit}>
-        <h3 className='form-title'>Cadastre-se</h3>
-
+      {isRegisterFormVisible && <form className='form flex-column align-center gap-20' onSubmit={handleRegisterSubmit}>
         <input
           className="input"
           type="text"
@@ -201,31 +199,30 @@ function LandingPage(props) {
         <input
           className="input"
           type="password"
-          placeholder="Senha"
+          placeholder="******"
           value={registerPassword || ""}
           onChange={(e) => setRegisterPassword(e.target.value)}
         />
 
-        <div className='button-container'>
-          <button 
-            className='button submit-button' 
-            type='submit'
-            disabled={hasRegisterErrors || username === '' || registerEmail === '' || registerPassword === ''}
-          >
-            Registrar
-          </button>
-          <button
-            className='button return-button'
-            onClick={() => {handleResgiterForm(); handleLoginForm()}}
-          >
-            Entre
-          </button>
+        <button 
+          className='button submit-button' 
+          type='submit'
+          disabled={hasRegisterErrors || username === '' || registerEmail === '' || registerPassword === ''}
+        >
+          CADASTRAR
+        </button>
+
+        <div className='message-box'>
+          {(registerErrors[0] && <div className="empty-fields">{registerErrors[0]}</div>) || 
+          (registerErrors[1] && <div className="empty-fields">{registerErrors[1]}</div>) ||
+          (registerErrors[2] && <div className="empty-fields">{registerErrors[2]}</div>) ||
+          ((username === '' || registerTelefone === '' || registerEmail === '' || registerPassword === '') && <div className="empty-fields">Há campos vazios</div>)}
         </div>
         
-        {(registerErrors[0] && <div className="error-message">{registerErrors[0]}</div>) || 
-        (registerErrors[1] && <div className="error-message">{registerErrors[1]}</div>) ||
-        (registerErrors[2] && <div className="error-message">{registerErrors[2]}</div>) ||
-        ((username === '' || registerTelefone === '' || registerEmail === '' || registerPassword === '') && <div className="error-message">Há campos vazios</div>)}
+
+        <span className='login-cadastro-toggle'>
+          Ainda não possui conta? <span  onClick={() => {handleLoginForm(); handleResgiterForm()}}>Cadastre-se</span>
+        </span>
       </form>}
     </div>
   </div>
