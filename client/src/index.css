@@ -65,6 +65,10 @@
     padding: 20px;
 }
 
+.page-title {
+    color: #fff
+}
+
 /* LOGIN CADASTRO */
 
 .logo-box {
@@ -123,11 +127,6 @@
 
 /* CADEIRAS */
 
-.page-title {
-    color: #fff
-
-}
-
 .cadeira-box {
     height: 100px;
     width: calc(100% - 10px);
@@ -175,9 +174,32 @@
 
 /* AGENDAMENTO */
 
+.servico-title {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.servico-box {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.mes-ano-slider {
+    padding: 10px;
+    border-radius: 10px 10px 0 0 ;
+    background-color: #fff;
+}
+
+.mes-ano-calendario {
+    width: 140px;
+    font-weight: bold;
+}
+
 .calendario-box {
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 0 0 10px 10px;
     background-color: #fff;
     font-weight: bold;
 }
@@ -207,6 +229,14 @@ th:last-child, td:last-child {
     color: #fff;
     background-color: #7dcfe5;
     border-radius: 3px;
+}
+
+.dia-folga {
+    color: red;
+}
+
+.hoje {
+    color: blue;
 }
 
 .horas-box {

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, } from 'react';
 import { useParams, useNavigate, redirect } from 'react-router-dom';
 import { useSnackbar } from "notistack";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { get_id } from '../../services/auth';
 import api from '../../services/api';
 
@@ -92,11 +94,11 @@ const meses = {
 
 function Servico(props) {
   function messageError(message) {
-    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'}});
+    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'},autoHideDuration: 2000});
   }
   
   function messageSuccess(message) {
-    enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'}});
+    enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'}, autoHideDuration: 1000});
   }
 
   const { enqueueSnackbar } = useSnackbar();
@@ -109,6 +111,7 @@ function Servico(props) {
   const [dia, setDia] = useState(new Date().getDate());
   const [mes, setMes] = useState(new Date().getMonth());
   const [ano, setAno] = useState(new Date().getFullYear());
+  const [hoje, setHoje] = useState(new Date().getDate());
   const [horaSelecionada, setHoraSelecionada] = useState(null);
 
   const calendario = calendarioFunction(mes, ano);
@@ -157,97 +160,114 @@ function Servico(props) {
     }
   }
 
-  return <div className='body'>
-    <h1>{resData.cadeira.nome}</h1>
-    <div>
-      <span>{resData.servico.nome}</span>
-      <span>{formatMoeda(resData.servico.preco)}</span>
-    </div>
-    <div class='mes-slider'>
-      <button
-        type='button'
-        onClick={() => {
-          if(mes <= 0) {
-            setMes(11)
-            setAno(ano-1)
-          } else {
-            setMes(mes-1)
-          }
-          setDia(1)
-        }}
-      >
-        anterior
-      </button>
-      <span>{`${meses[mes]} ${ano}`}</span>
-      <button
-        type='button'
-        onClick={() => {
-          let mes2 = mes+1;
-          if(mes2 >= 12) {
-            setMes(0)
-            setAno(ano+1)
-          } else {
-            setMes(mes+1)
-          }
-          setDia(1)
-        }}
-      >
-        próximo
-      </button>
-    </div>
-    <div className='calendario-box'>
-      <table>
-        <tr>
-          <th>Dom</th>
-          <th>Seg</th>
-          <th>Ter</th>
-          <th>Qua</th>
-          <th>Qui</th>
-          <th>Sex</th>
-          <th>Sáb</th>
-        </tr>
-        {calendario.map(item => <tr>{item.map(item2 => {
-          if (item2 === 0) return <td></td>
-          else return <td className={dia === item2 ? 'dia-selecionado' : 'dia-normal'} onClick={() => {setDia(item2)}}>{item2}</td>
-        })}</tr>)}
-      </table>
-    </div>
-    <div className='horas-box'>
-      {Object.keys(resData.cadeira).map(hora => {
-        if (resData.cadeira[hora] === 1 && (hora !== 'id' && hora !== 'folga')) {
-          const horaFormatada = hora.length === 6 ? hora.replace('hora', '')+'h' : '0'+hora.replace('hora', '')+'h';
-          return (
-            <div 
-              key={hora}
-              className={`vha-center ${horaSelecionada !== null && horaFormatada === horaSelecionada.target.innerText ? 'hora-selecionada hora-normal' : 'hora-normal'}`}
-              onClick={(hora) => setHoraSelecionada(hora)}
-            >
-              {horaFormatada}
+    return (
+        <div className='body flex-column justify-space-btw'>
+            <h2 className='servico-title flex-row justify-center align-center'>{resData.cadeira.nome}</h2>
+            <div className='servico-box flex-row justify-space-btw'>
+                <div>{resData.servico.nome}</div>
+                <div className='flex-row align-center'>{formatMoeda(resData.servico.preco)}</div>
             </div>
-          );
-        }
-        return null;
-      })}
-    </div>
-    <div>
-      <button
-        type='button'
-        className='button w100'
-        onClick={() => handleFinalizarAgendamento(`/cadeira/${resData.cadeira.id}`)}
-      >
-        Finalizar agendamento
-      </button>
-    </div>
-    <div>
-      <button
-        type='button'
-        className='button w100'
-        onClick={() => navigate(`/cadeira/${resData.cadeira.id}`)}
-      >
-        Voltar
-      </button>
-    </div>
-  </div>
+            <div>
+                <div className='mes-ano-slider flex-row justify-center align-center'>
+                    <FontAwesomeIcon 
+                        icon={faChevronLeft} 
+                        style={{ fontSize: '150%' }}
+                        onClick={() => {
+                            if(mes <= 0) {
+                                setMes(11)
+                                setAno(ano-1)
+                            } else {
+                                setMes(mes-1)
+                            }
+                            setDia(1)
+                        }}
+                    />
+                    <div className='mes-ano-calendario flex-row justify-center'>{`${meses[mes]} ${ano}`}</div>
+                    <FontAwesomeIcon
+                        icon={faChevronRight}
+                        style={{ fontSize: '150%' }}
+                        onClick={() => {
+                            let mes2 = mes+1;
+                            if (mes2 >= 12) {
+                                setMes(0)
+                                setAno(ano+1)
+                            } else {
+                                setMes(mes+1)
+                            }
+                            setDia(1)
+                        }}
+                    />
+                </div>
+                <div className='calendario-box'>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dom</th>
+                                <th>Seg</th>
+                                <th>Ter</th>
+                                <th>Qua</th>
+                                <th>Qui</th>
+                                <th>Sex</th>
+                                <th>Sáb</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {calendario.map((semana, indiceSemana) => (
+                                <tr key={indiceSemana}>
+                                    {semana.map((diaCalendario, indiceDia) => {
+                                        if (diaCalendario === 0) return <td key={indiceDia}></td>;
+                                        return (
+                                            <td
+                                                key={indiceDia}
+                                                data-indice-dia={indiceDia}
+                                                className={`${diaCalendario === hoje ? 'hoje' : ''} ${indiceDia === resData.cadeira.folga ? 'dia-folga' : ''} ${diaCalendario === dia ? 'dia-selecionado' : 'dia-normal'}`}
+                                                onClick={() => indiceDia !== resData.cadeira.folga ? setDia(diaCalendario) : ''}
+                                            >
+                                                {diaCalendario}
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div className='horas-box'>
+                {Object.keys(resData.cadeira).map(hora => {
+                    if (resData.cadeira[hora] === 1 && (hora !== 'id' && hora !== 'folga')) {
+                        const horaFormatada = hora.length === 6 ? hora.replace('hora', '')+'h' : '0'+hora.replace('hora', '')+'h';
+                        return <div 
+                                key={hora}
+                                className={`vha-center ${horaSelecionada !== null && horaFormatada === horaSelecionada.target.innerText ? 'hora-selecionada hora-normal' : 'hora-normal'}`}
+                                onClick={(hora) => setHoraSelecionada(hora)}
+                            >
+                                {horaFormatada}
+                            </div>
+                    }
+                    return null;
+                })}
+            </div>
+            <div>
+                <button
+                    type='button'
+                    className='button w100'
+                    onClick={() => handleFinalizarAgendamento()}
+                >
+                    Finalizar agendamento
+                </button>
+            </div>
+            <div>
+                <button
+                    type='button'
+                    className='button w100'
+                    onClick={() => navigate(`/cadeira/${resData.cadeira.id}`)}
+                >
+                    Voltar
+                </button>
+            </div>
+        </div>
+    )
 }
 
 export default Servico;
