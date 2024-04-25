@@ -154,7 +154,7 @@ function Servico(props) {
 
     if (response.data.status) {
       messageSuccess(response.data.message);
-      // redirect('/agendamentos')
+      navigate('/agendamentos')
     } else {
       messageError(response.data.message);
     }
@@ -179,7 +179,7 @@ function Servico(props) {
                             } else {
                                 setMes(mes-1)
                             }
-                            setDia(1)
+                            new Date(ano, mes, 1).getDay() === 0 ? setDia(2) : setDia(1)
                         }}
                     />
                     <div className='mes-ano-calendario flex-row justify-center'>{`${meses[mes]} ${ano}`}</div>
@@ -187,14 +187,13 @@ function Servico(props) {
                         icon={faChevronRight}
                         style={{ fontSize: '150%' }}
                         onClick={() => {
-                            let mes2 = mes+1;
-                            if (mes2 >= 12) {
+                            if (mes >= 11) {
                                 setMes(0)
                                 setAno(ano+1)
                             } else {
                                 setMes(mes+1)
                             }
-                            setDia(1)
+                            new Date(ano, mes, 1).getDay() === 0 ? setDia(2) : setDia(1) // está mudando após o proximo click
                         }}
                     />
                 </div>
@@ -220,7 +219,7 @@ function Servico(props) {
                                             <td
                                                 key={indiceDia}
                                                 data-indice-dia={indiceDia}
-                                                className={`${diaCalendario === hoje ? 'hoje' : ''} ${indiceDia === resData.cadeira.folga ? 'dia-folga' : ''} ${diaCalendario === dia ? 'dia-selecionado' : 'dia-normal'}`}
+                                                className={`${diaCalendario === hoje && new Date().getMonth() === mes ? 'hoje' : ''} ${indiceDia === resData.cadeira.folga ? 'dia-folga' : ''} ${diaCalendario === dia ? 'dia-selecionado' : 'dia-normal'}`}
                                                 onClick={() => indiceDia !== resData.cadeira.folga ? setDia(diaCalendario) : ''}
                                             >
                                                 {diaCalendario}

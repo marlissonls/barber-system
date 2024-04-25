@@ -35,7 +35,7 @@ class AgendamentoController {
         const userId = req.params.userId;
 
         const query = `
-            SELECT agendamentos.id, cadeiras.nome AS nome_cadeira, servicos.nome AS nome_servico, servicos.preco AS preco_servico
+            SELECT agendamentos.id, agendamentos.data, agendamentos.hora, cadeiras.nome AS nome_cadeira, servicos.nome AS nome_servico, servicos.preco AS preco_servico
             FROM agendamentos
             INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
             INNER JOIN servicos ON agendamentos.servico_id = servicos.id
@@ -48,15 +48,11 @@ class AgendamentoController {
             const agenda = await db.all(query, params);
             await db.close();
     
-            if (!agenda.length) {
-                return res.status(404).json({ error: 'Nenhuma agenda pendente encontrada.' });
-            }
-    
-            return res.status(200).json({ agenda });
+            return res.status(200).json({ status: true, data: agenda });
         } catch (err) {
             await db.close();
             console.error(err.message);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(200).json({ status: false, message: 'Falha ao buscar agendamentos' });
         }
     }
 
@@ -69,7 +65,7 @@ class AgendamentoController {
             INNER JOIN usuarios ON agendamentos.cadeira_id = usuarios.id
             INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
             INNER JOIN servicos ON agendamentos.servico_id = servicos.id
-            WHERE agendamentos.usuario_id = ? AND agendamentos.status != "concluído"
+            WHERE agendamentos.cadeira_id = ? AND agendamentos.status != "concluído"
         `;
         const params = [id];
     
@@ -78,14 +74,10 @@ class AgendamentoController {
             const agenda = await db.all(query, params);
             await db.close();
     
-            if (!agenda.length) {
-                return res.status(404).json({ error: 'Nenhuma agenda pendente encontrada.' });
-            }
-    
-            return res.status(200).json(agenda);
+            return res.status(200).json({ status: true, data: agenda });
         } catch (err) {
             console.error(err.message);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(200).json({ status: false, message: 'Falha ao buscar agendamentos' });
         }
     }
 
