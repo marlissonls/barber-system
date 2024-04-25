@@ -3,32 +3,31 @@ import getConnection from '../database/index.js';
 
 dotenv.config();
 
-class UsuarioController {
+class AgendamentoController {
     async register(req, res) {
         const { usuario_id, cadeira_id, servico_id, data, hora } = req.body;
-
+    
+        const usuarioAgendamentosQuery = 'SELECT * FROM agendamentos WHERE usuario_id = ?';
+        const usuarioAgendamentosParams = [usuario_id];
+        
+        const agendamentoQuery = 'INSERT INTO agendamentos (usuario_id, cadeira_id, servico_id, data, hora) VALUES (?, ?, ?, ?, ?)';
+        const agendamentoParams = [usuario_id, cadeira_id, servico_id, data, hora];
+    
         const db = await getConnection();
         try {
-
-            const checkUserQuery = 'SELECT * FROM usuarios WHERE id = ?';
-            const checkUserParams = [userId];
-            const usuario = await db.get(checkUserQuery, checkUserParams);
-
-            if (!usuario) {
-                return res.status(404).json({ error: 'Usuário não encontrado' });
-            }
-
-            const query = 'INSERT INTO agendamentos (usuario_id, cadeira_id, servico_id, data, hora) VALUES (?, ?, ?, ?, ?)';
-            const params = [usuario_id, cadeira_id, servico_id, data, hora];
+            const usuarioAgendamentos = await db.all(usuarioAgendamentosQuery, usuarioAgendamentosParams);
+            
+            const agendamentoExistente = usuarioAgendamentos.some(agendamento => agendamento.data === data && agendamento.hora === hora);
+            if (agendamentoExistente) return res.status(200).json({ status: false, message: 'Você já agendou neste horário hoje.' });
     
-            db.run(query, params);
+            db.run(agendamentoQuery, agendamentoParams);
             await db.close();
-
-            return res.status(200).json({ message: 'Agendamento realizado!' });
+    
+            return res.status(200).json({ status: true, message: 'Agendamento realizado!' });
         } catch(err) {
             await db.close();
             console.error(err.message);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     }
 
@@ -118,4 +117,4 @@ class UsuarioController {
     }
 }
 
-export default UsuarioController;
+export default AgendamentoController;

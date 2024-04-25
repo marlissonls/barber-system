@@ -65,7 +65,7 @@ function LandingPage(props) {
     const response = await api.post(`/login`, {
       identificador: identificador, senha: password
     })
-    console.log(response.data)
+
     if (response.data.status) {
       messageSuccess(response.data.message)
       set_token(response.data.usuario.token)

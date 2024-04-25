@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, redirect } from 'react-router-dom';
 import { useSnackbar } from "notistack";
+import { get_id } from '../../services/auth';
 import api from '../../services/api';
 
 async function getServicoInfo(id) {
@@ -90,25 +91,27 @@ const meses = {
 };
 
 function Servico(props) {
+  function messageError(message) {
+    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'}});
+  }
+  
+  function messageSuccess(message) {
+    enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'}});
+  }
+
+  const { enqueueSnackbar } = useSnackbar();
+
   const { id } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const refLoading = useRef(false)
-  const [data, setData] = useState({ cadeira: {}, servico: {} });
+  const [resData, setResData] = useState({ cadeira: {}, servico: {} });
   const [dia, setDia] = useState(new Date().getDate());
   const [mes, setMes] = useState(new Date().getMonth());
   const [ano, setAno] = useState(new Date().getFullYear());
   const [horaSelecionada, setHoraSelecionada] = useState(null);
 
-  const { enqueueSnackbar } = useSnackbar();
-
-  function messageError(message) {
-    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'}});
-  }
-
-  function messageSuccess(message) {
-    enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'}});
-  }
+  const calendario = calendarioFunction(mes, ano);
 
   useEffect(() => {
     async function fetchServicoInfo() {
@@ -117,7 +120,7 @@ function Servico(props) {
           refLoading.current = true;
           try {
             const reqData = await getServicoInfo(id);
-            setData(reqData);
+            setResData(reqData);
           } catch (error) {
             messageError('Erro ao carregar dados.')
           } finally {
@@ -130,21 +133,35 @@ function Servico(props) {
     fetchServicoInfo()
   }, [id]);
 
-  const calendario = calendarioFunction(mes, ano);
+  async function handleFinalizarAgendamento() {
+    if (horaSelecionada === null) return messageError('Selecione um dia e horário.');
+
+    const dataSelecionada = new Date(ano, mes, dia);
+    const dataTimestamp = dataSelecionada.getTime();
+
+    const agendamento = {
+      usuario_id: parseInt(get_id()),
+      cadeira_id: resData.cadeira.id,
+      servico_id: resData.servico.id,
+      data: dataTimestamp,
+      hora: parseInt(horaSelecionada.target.innerText.replace('h',''), 10)
+    }
+
+    const response = await api.post(`/agendamento`, agendamento)
+
+    if (response.data.status) {
+      messageSuccess(response.data.message);
+      // redirect('/agendamentos')
+    } else {
+      messageError(response.data.message);
+    }
+  }
 
   return <div className='body'>
+    <h1>{resData.cadeira.nome}</h1>
     <div>
-      <button
-        type='button'
-        onClick={() => navigate(`/cadeira/${data.cadeira.id}`)}
-      >
-        Voltar
-      </button>
-    </div>
-    <h1>{data.cadeira.nome}</h1>
-    <div>
-      <span>{data.servico.nome}</span>
-      <span>{formatMoeda(data.servico.preco)}</span>
+      <span>{resData.servico.nome}</span>
+      <span>{formatMoeda(resData.servico.preco)}</span>
     </div>
     <div class='mes-slider'>
       <button
@@ -196,8 +213,8 @@ function Servico(props) {
       </table>
     </div>
     <div className='horas-box'>
-      {Object.keys(data.cadeira).map(hora => {
-        if (data.cadeira[hora] === 1 && (hora !== 'id' && hora !== 'folga')) {
+      {Object.keys(resData.cadeira).map(hora => {
+        if (resData.cadeira[hora] === 1 && (hora !== 'id' && hora !== 'folga')) {
           const horaFormatada = hora.length === 6 ? hora.replace('hora', '')+'h' : '0'+hora.replace('hora', '')+'h';
           return (
             <div 
@@ -211,6 +228,24 @@ function Servico(props) {
         }
         return null;
       })}
+    </div>
+    <div>
+      <button
+        type='button'
+        className='button w100'
+        onClick={() => handleFinalizarAgendamento(`/cadeira/${resData.cadeira.id}`)}
+      >
+        Finalizar agendamento
+      </button>
+    </div>
+    <div>
+      <button
+        type='button'
+        className='button w100'
+        onClick={() => navigate(`/cadeira/${resData.cadeira.id}`)}
+      >
+        Voltar
+      </button>
     </div>
   </div>
 }
