@@ -3,6 +3,7 @@ import { useNavigate} from 'react-router-dom';
 import { useSnackbar } from "notistack";
 import { get_id } from "../../services/auth";
 import api from "../../services/api";
+import Rodape from "../../components/rodape";
 
 async function getAgendamentos(user_id) {
   const response = await api.get(`/agendamento/${user_id}`)
@@ -24,7 +25,7 @@ const formatData = (times) => {
 }
 
 const formatHora = (hora) => {
-  return `Às ${hora}:00`
+  return `às ${hora}:00`
 }
 
 function Agendamentos() {
@@ -62,7 +63,7 @@ function Agendamentos() {
 
     const user_id = get_id();
     if (user_id === "null") return;
-    console.log(user_id)
+
     if (!refLoading.current) {
       refLoading.current = true;
       fetchAgendamentosData(user_id);
@@ -70,22 +71,25 @@ function Agendamentos() {
   }, []);
 
   return (
-    <div className='body'>
-      <h2>Agendamentos</h2>
-      <div className='adendamentos-body flex-column  gap-20'>
+    <div className='body flex-column justify-left gap-20'>
+      <h2 className='agendamentos-title flex-row justify-center align-center'>Agendamentos</h2>
+      <div className='adendamentos-body flex-column gap-20'>
       {data ? (
         data.map(agendamento => (
-          <div className='agendamento-box flex-column align-center gap-10' key={agendamento.id}>
-            <div>{agendamento.nome_cadeira}</div>
-            <div>{agendamento.nome_servico} {formatMoeda(agendamento.preco_servico)}</div>
-            <div>{formatData(agendamento.data)} {formatHora(agendamento.hora)}</div>
+          <div 
+            className='agendamento-box flex-column gap-10' 
+            key={agendamento.id}
+          >
+            <div className='cadeira-title flex-row justify-center'>{agendamento.nome_cadeira}</div>
+            <div className='flex-row justify-space-btw'><span>{agendamento.nome_servico}</span><span>{formatMoeda(agendamento.preco_servico)}</span></div>
+            <div className='flex-row justify-space-btw'><span>Agendado para: </span><span>{formatData(agendamento.data)} {formatHora(agendamento.hora)}</span></div>
           </div>
         ))
       ) : (
         <div>Carregando...</div>
       )}
       </div>
-      <div>
+      {/* <div>
         <button
             type='button'
             className='button w100'
@@ -93,7 +97,8 @@ function Agendamentos() {
         >
           Voltar
         </button>
-    </div>
+      </div> */}
+      <Rodape />
     </div>
   );
 }

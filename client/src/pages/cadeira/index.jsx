@@ -1,13 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { useSnackbar } from "notistack";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faChartColumn, faEye, faEdit, faX} from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
-
-import { get_company_id } from '../../services/auth';
-import { validateCardInputs } from "../../services/validateFields";
-import api from '../../services/api';
 import { useParams, useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import api from '../../services/api';
+import Rodape from '../../components/rodape';
 
 async function getCadeiraInfo(id) {
   const response = await api.get(`/cadeira/${id}`)
@@ -86,9 +81,10 @@ function Cadeira(props) {
         <p>Nenhum serviço disponível no momento.</p>
       )}
     </div>
-    <div>
+    {/* <div>
       <button className='button w100' type='button' onClick={() => navigate(`/cadeiras`)}>Voltar</button>
-    </div>
+    </div> */}
+    <Rodape />
   </div>
 }
 

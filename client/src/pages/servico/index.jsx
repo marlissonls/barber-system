@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { get_id } from '../../services/auth';
 import api from '../../services/api';
+import Rodape from '../../components/rodape';
 
 async function getServicoInfo(id) {
   const response = await api.get(`/servico/${id}`)
@@ -161,7 +162,7 @@ function Servico(props) {
   }
 
     return (
-        <div className='body flex-column justify-space-btw'>
+        <div className='body flex-column justify-left gap-30'>
             <h2 className='servico-title flex-row justify-center align-center'>{resData.cadeira.nome}</h2>
             <div className='servico-box flex-row justify-space-btw'>
                 <div>{resData.servico.nome}</div>
@@ -173,13 +174,18 @@ function Servico(props) {
                         icon={faChevronLeft} 
                         style={{ fontSize: '150%' }}
                         onClick={() => {
+                            let mes2 = mes;
+                            let ano2 = ano;
                             if(mes <= 0) {
+                                mes2 = 11
+                                ano2 = ano-1
                                 setMes(11)
                                 setAno(ano-1)
                             } else {
+                                mes2 = mes-1
                                 setMes(mes-1)
                             }
-                            new Date(ano, mes, 1).getDay() === 0 ? setDia(2) : setDia(1)
+                            new Date(ano2, mes2, 1).getDay() === 0 ? setDia(2) : setDia(1)
                         }}
                     />
                     <div className='mes-ano-calendario flex-row justify-center'>{`${meses[mes]} ${ano}`}</div>
@@ -187,13 +193,18 @@ function Servico(props) {
                         icon={faChevronRight}
                         style={{ fontSize: '150%' }}
                         onClick={() => {
+                            let mes2 = mes;
+                            let ano2 = ano;
                             if (mes >= 11) {
+                                mes2 = 0
+                                ano2 = ano+1
                                 setMes(0)
                                 setAno(ano+1)
                             } else {
+                                mes2 = mes+1
                                 setMes(mes+1)
                             }
-                            new Date(ano, mes, 1).getDay() === 0 ? setDia(2) : setDia(1) // está mudando após o proximo click
+                            new Date(ano2, mes2, 1).getDay() === 0 ? setDia(2) : setDia(1) // está mudando após o proximo click
                         }}
                     />
                 </div>
@@ -256,7 +267,7 @@ function Servico(props) {
                     Finalizar agendamento
                 </button>
             </div>
-            <div>
+            {/* <div>
                 <button
                     type='button'
                     className='button w100'
@@ -264,7 +275,8 @@ function Servico(props) {
                 >
                     Voltar
                 </button>
-            </div>
+            </div> */}
+            <Rodape />
         </div>
     )
 }
