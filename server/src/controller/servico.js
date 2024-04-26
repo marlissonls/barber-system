@@ -30,6 +30,7 @@ class ServicoController {
         const servicoQuery = 'SELECT * FROM servicos WHERE id = ?';
         const servicoParams = [id];
         const cadeiraQuery = 'SELECT * FROM cadeiras WHERE id = ?';
+        const agendamentosCadeiraQuery = 'SELECT * FROM agendamentos WHERE cadeira_id = ?';
 
         const db = await getConnection();
         try {
@@ -39,10 +40,12 @@ class ServicoController {
             }
 
             const cadeiraParams = [servico.cadeira_id];
+
             const cadeira = await db.get(cadeiraQuery, cadeiraParams);
+            const agendamentos = await db.all(agendamentosCadeiraQuery, cadeiraParams)
             await db.close();
 
-            return res.status(200).json({ cadeira, servico });
+            return res.status(200).json({ cadeira, servico, agendamentos });
         } catch (err) {
             await db.close();
             console.error(err.message);

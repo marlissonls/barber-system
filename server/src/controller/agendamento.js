@@ -6,19 +6,17 @@ dotenv.config();
 class AgendamentoController {
     async register(req, res) {
         const { usuario_id, cadeira_id, servico_id, data, hora } = req.body;
-    
-        const usuarioAgendamentosQuery = 'SELECT * FROM agendamentos WHERE usuario_id = ?';
-        const usuarioAgendamentosParams = [usuario_id];
-        
+
+        const agendamentosQuery = 'SELECT * FROM agendamentos';
         const agendamentoQuery = 'INSERT INTO agendamentos (usuario_id, cadeira_id, servico_id, data, hora) VALUES (?, ?, ?, ?, ?)';
         const agendamentoParams = [usuario_id, cadeira_id, servico_id, data, hora];
     
         const db = await getConnection();
         try {
-            const usuarioAgendamentos = await db.all(usuarioAgendamentosQuery, usuarioAgendamentosParams);
+            const agendamentos = await db.all(agendamentosQuery);
             
-            const agendamentoExistente = usuarioAgendamentos.some(agendamento => agendamento.data === data && agendamento.hora === hora);
-            if (agendamentoExistente) return res.status(200).json({ status: false, message: 'Você já agendou neste horário hoje.' });
+            const agendamentoExistente = agendamentos.some(agendamento => agendamento.data === data && agendamento.hora === hora);
+            if (agendamentoExistente) return res.status(200).json({ status: false, message: 'Dia e horário indisponível.' });
     
             db.run(agendamentoQuery, agendamentoParams);
             await db.close();
@@ -26,7 +24,7 @@ class AgendamentoController {
             return res.status(200).json({ status: true, message: 'Agendamento realizado!' });
         } catch(err) {
             await db.close();
-            console.error(err.message);
+            console.error(err);
             return res.status(200).json({ status: false, message: 'Houve um erro na solicitação.' });
         }
     }

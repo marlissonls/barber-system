@@ -27,8 +27,14 @@ export async function cadeira2(db) {
     `);
 }
 
+export async function cadeira3(db) {
+    await db.exec(`
+        ALTER TABLE cadeiras ADD usuario_id INTEGER DEFAULT 0;
+    `);
+}
+
 const dbPath = process.cwd()+'/src/database/db/data.db';
 const db = await getConnection(dbPath);
-await cadeira2(db);
+await cadeira3(db);
 await db.close();
 

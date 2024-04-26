@@ -3,20 +3,20 @@ import { SnackbarProvider } from 'notistack';
 import { createBrowserRouter, RouterProvider, redirect } from "react-router-dom";
 
 import LandingPage from "./pages/landingPage";
-import Agendamentos from "./pages/agendamentos";
-import Cadeira from "./pages/cadeira";
 import Cadeiras from "./pages/cadeiras";
+import Cadeira from "./pages/cadeira";
 import Servico from "./pages/servico";
-import Agendamento from "./pages/agendamento";
-import { isAdmin, isAuthenticated } from "./services/auth";
+import Agendamentos from "./pages/agendamentos";
+import AgendamentosCadeira from "./pages/agendamentosCadeira";
+import { isBarbeiro, isAuthenticated } from "./services/auth";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <LandingPage />,
         loader: async () => {
-        if (isAuthenticated() && !isAdmin()) throw new redirect("/cadeiras");
-        if (isAuthenticated() && isAdmin()) throw new redirect("/admin");
+        if (isAuthenticated() && !isBarbeiro()) throw new redirect("/cadeiras");
+        if (isAuthenticated() && isBarbeiro()) throw new redirect("/barbeiro");
         return {}
         }
     },
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
         element: <Cadeiras />,
         loader: async () => {
         if (!isAuthenticated()) throw new redirect("/");
-        if (isAdmin()) throw new redirect("/admin");
+        if (isBarbeiro()) throw new redirect("/barbeiro");
         return {}
         }
     },
@@ -34,22 +34,7 @@ const router = createBrowserRouter([
         element: <Cadeira />,
         loader: async () => {
         if (!isAuthenticated()) throw new redirect("/");
-        return {}
-        }
-    },
-    {
-        path: "/agendamentos",
-        element: <Agendamentos />,
-        loader: async () => {
-        if (!isAuthenticated()) throw new redirect("/");
-        return {}
-        }
-    },
-    {
-        path: "/agendamentos/:id",
-        element: <Agendamento />,
-        loader: async () => {
-        if (!isAuthenticated()) throw new redirect("/");
+        if (isBarbeiro()) throw new redirect("/barbeiro");
         return {}
         }
     },
@@ -58,9 +43,28 @@ const router = createBrowserRouter([
         element: <Servico />,
         loader: async () => {
         if (!isAuthenticated()) throw new redirect("/");
+        if (isBarbeiro()) throw new redirect("/barbeiro");
         return {}
         }
-    }
+    },
+    {
+        path: "/agendamentos",
+        element: <Agendamentos />,
+        loader: async () => {
+        if (!isAuthenticated()) throw new redirect("/");
+        if (isBarbeiro()) throw new redirect("/barbeiro");
+        return {}
+        }
+    },
+    {
+        path: "/barbeiro",
+        element: <AgendamentosCadeira />,
+        loader: async () => {
+        if (!isAuthenticated()) throw new redirect("/");
+        if (!isBarbeiro()) throw new redirect("/cadeiras");
+        return {}
+        }
+    },
 ]);
 
 function App() {

@@ -1,17 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { useSnackbar } from "notistack";
 import { get_id } from "../../services/auth";
-import api from "../../services/api";
 import { formatMoeda, formatData, formatHora } from '../../services/formaters';
-import Rodape from "../../components/rodape";
+import api from "../../services/api";
 
 async function getAgendamentos(user_id) {
-  const response = await api.get(`/agendamento/${user_id}`)
-  return response.data
-}
+    const response = await api.get(`/agendamento/${user_id}`)
+    return response.data
+  }
 
-function Agendamentos() {
-  const refLoading = useRef(false)
+function AgendamentosCadeira(props) {
+    const refLoading = useRef(false)
   const [data, setData] = useState(null);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -74,9 +73,8 @@ function Agendamentos() {
           Voltar
         </button>
       </div> */}
-      <Rodape />
     </div>
   );
 }
 
-export default Agendamentos;
+export default AgendamentosCadeira;

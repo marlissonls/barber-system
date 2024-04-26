@@ -68,8 +68,8 @@ function isAuthenticated() {
     return false;
 }
 
-function isAdmin() {
-    if (get_tipo() === 'admin') return true;
+function isBarbeiro() {
+    if (get_tipo() === 'barbeiro') return true;
     return false;
 }
 
@@ -101,6 +101,6 @@ export {
     get_position,
     set_position,
     isAuthenticated,
-    isAdmin,
+    isBarbeiro,
     logout,
 }

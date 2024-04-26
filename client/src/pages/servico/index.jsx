@@ -5,20 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { get_id } from '../../services/auth';
 import api from '../../services/api';
+import { formatMoeda } from '../../services/formaters';
 import Rodape from '../../components/rodape';
 
 async function getServicoInfo(id) {
   const response = await api.get(`/servico/${id}`)
   return response.data
-}
-
-function formatMoeda(valor) {
-  return valor !== null && valor !== undefined
-    ? valor.toLocaleString('pt-br', {
-        style: 'currency',
-        currency: 'BRL',
-      })
-    : '';
 }
 
 function diasNoMes (mes, ano) {
@@ -108,14 +100,28 @@ function Servico(props) {
   const navigate = useNavigate();
 
   const refLoading = useRef(false)
-  const [resData, setResData] = useState({ cadeira: {}, servico: {} });
+  const [resData, setResData] = useState({ cadeira: {}, servico: {}, agendamentos: [] });
   const [dia, setDia] = useState(new Date().getDate());
   const [mes, setMes] = useState(new Date().getMonth());
   const [ano, setAno] = useState(new Date().getFullYear());
   const [hoje, setHoje] = useState(new Date().getDate());
-  const [horaSelecionada, setHoraSelecionada] = useState(null);
+  const [horaSelecionada, setHoraSelecionada] = useState(undefined);
 
   const calendario = calendarioFunction(mes, ano);
+
+  const horariosLista = Object
+  .keys(resData.cadeira)
+  .filter(hora => resData.cadeira[hora] === 1 && hora !== 'id' && hora !== 'folga' && hora !== 'usuario_id')
+  .map(hora => hora.replace('hora', ''))
+  
+	let horariosDisponiveis = [...horariosLista];
+	for (let i in horariosLista) {
+		for (let j in resData.agendamentos) {
+			if (new Date(ano, mes, dia).getTime() === resData.agendamentos[j].data && horariosLista[i] === String(resData.agendamentos[j].hora)) {
+				horariosDisponiveis = horariosDisponiveis.filter(hora => hora !== horariosLista[i])
+			}
+		}
+	}
 
   useEffect(() => {
     async function fetchServicoInfo() {
@@ -244,18 +250,15 @@ function Servico(props) {
                 </div>
             </div>
             <div className='horas-box'>
-                {Object.keys(resData.cadeira).map(hora => {
-                    if (resData.cadeira[hora] === 1 && (hora !== 'id' && hora !== 'folga')) {
-                        const horaFormatada = hora.length === 6 ? hora.replace('hora', '')+'h' : '0'+hora.replace('hora', '')+'h';
-                        return <div 
-                                key={hora}
-                                className={`vha-center ${horaSelecionada !== null && horaFormatada === horaSelecionada.target.innerText ? 'hora-selecionada hora-normal' : 'hora-normal'}`}
-                                onClick={(hora) => setHoraSelecionada(hora)}
-                            >
-                                {horaFormatada}
-                            </div>
-                    }
-                    return null;
+                {horariosDisponiveis.map(hora => {
+					const horaFormatada = hora + 'h';
+					return <div 
+						key={hora}
+						className={`vha-center ${horaSelecionada !== undefined && horaFormatada === horaSelecionada.target.innerText ? 'hora-selecionada hora-normal' : 'hora-normal'}`}
+						onClick={(hora) => setHoraSelecionada(hora)}
+					>
+						{horaFormatada}
+					</div>
                 })}
             </div>
             <div>
@@ -267,15 +270,6 @@ function Servico(props) {
                     Finalizar agendamento
                 </button>
             </div>
-            {/* <div>
-                <button
-                    type='button'
-                    className='button w100'
-                    onClick={() => navigate(`/cadeira/${resData.cadeira.id}`)}
-                >
-                    Voltar
-                </button>
-            </div> */}
             <Rodape />
         </div>
     )
