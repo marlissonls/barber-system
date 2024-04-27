@@ -114,6 +114,23 @@
     font-size: 17px;
 }
 
+.button2 {
+    height: fit-content;
+    width: fit-content;
+    border-radius: 25px;
+    border: 0;
+    background-color: #1a6f89;
+    padding: 5px 20px;
+    margin-top: 10px;
+
+    color: #ddd;
+    font-size: 17px;
+}
+
+.button2.desabilitado {
+    background-color: #af5a46;
+}
+
 .login-cadastro-toggle {
     color: #1a6f89;
     font-size: 15px;

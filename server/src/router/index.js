@@ -34,6 +34,7 @@ router.delete('/servico/:id', servicoController.remove)
 router.post('/agendamento', agendamentoController.register)
 router.get('/agendamento/cliente/:userId', agendamentoController.usuarioAgendamentos)
 router.get('/agendamento/barbeiro/:userId', agendamentoController.cadeiraAgendamentos)
+router.put('/agendamento/:id', agendamentoController.concluir)
 router.delete('/agendamento/:id', agendamentoController.remove)
 
 export default router;

@@ -4,19 +4,27 @@ import { get_id } from "../../services/auth";
 import { formatMoeda, formatData, formatHora } from '../../services/formaters';
 import api from "../../services/api";
 
+function habilitaConclusaoServico(timestamp) {
+  return new Date() > new Date(timestamp)
+}
+
 async function getAgendamentos(user_id) {
     const response = await api.get(`/agendamento/barbeiro/${user_id}`)
     return response.data
   }
 
 function AgendamentosCadeira(props) {
-    const refLoading = useRef(false)
+  const refLoading = useRef(false)
   const [data, setData] = useState(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
   function messageError(message) {
     enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'} });
+  }
+
+  function messageSuccess(message) {
+    enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'} });
   }
 
   useEffect(() => {
@@ -45,6 +53,13 @@ function AgendamentosCadeira(props) {
     }
   }, []);
 
+  async function handleConcluirServico(id) {
+    const response = await api.put(`/agendamento/${id}`)
+    
+    if (response.data.status) messageSuccess(response.data.message)
+    else messageError(response.data.message)
+  }
+
   return (
     <div className='body flex-column justify-left gap-20'>
       <h2 className='agendamentos-title flex-row justify-center align-center'>Agendamentos</h2>
@@ -58,6 +73,16 @@ function AgendamentosCadeira(props) {
             <div className='cadeira-title flex-row justify-center'>{agendamento.nome_usuario}</div>
             <div className='flex-row justify-space-btw'><span>{agendamento.nome_servico}</span><span>{formatMoeda(agendamento.preco_servico)}</span></div>
             <div className='flex-row justify-space-btw'><span>Agendado para: </span><span>{formatData(agendamento.data)} {formatHora(agendamento.hora)}</span></div>
+            <div className='flex-row justify-center'>
+              {habilitaConclusaoServico(agendamento.data + agendamento.hora * 60 * 60 * 1000) && 
+              <button
+                type='button'
+                className='button2'
+                onClick={() => handleConcluirServico(agendamento.id)}
+              >
+                Concluir serviço
+              </button>}
+            </div>
           </div>
         ))
       ) : (

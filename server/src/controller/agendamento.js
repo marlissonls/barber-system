@@ -66,7 +66,7 @@ class AgendamentoController {
             INNER JOIN usuarios ON agendamentos.usuario_id = usuarios.id
             INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
             INNER JOIN servicos ON agendamentos.servico_id = servicos.id
-            WHERE agendamentos.cadeira_id = ? AND agendamentos.status != "concluído"
+            WHERE agendamentos.cadeira_id = ? AND agendamentos.status != 'concluído'
         `;
 
         const db = await getConnection();
@@ -85,6 +85,34 @@ class AgendamentoController {
         }
     }
 
+    async concluir(req, res) {
+        const id = req.params.id
+
+        const checkAgendamentoQuery = 'SELECT * FROM agendamentos WHERE id = ?';
+        const checkAgendamentoParams = [id];
+
+        const updateQuery = `UPDATE agendamentos SET status='concluído' WHERE id = ?`;
+        const updateParams = [id];
+
+        const db = await getConnection();
+        try {
+            const agendamento = await db.get(checkAgendamentoQuery, checkAgendamentoParams);
+    
+            if (!agendamento) {
+                return res.status(200).json({ status: false, message: 'Agendamento não encontrado' });
+            }
+
+            await db.run(updateQuery, updateParams);
+            await db.close();
+
+            return res.status(200).json({ status: true, message: 'Serviço concluído!' });
+        } catch (err) {
+            await db.close();
+            console.error(err.message);
+            return res.status(200).json({ status: false, message: 'Houve uma falha na solicitação' });
+        }
+    }
+
     async remove(req, res) {
         const id = req.params.id
 
@@ -95,7 +123,7 @@ class AgendamentoController {
             const agendamento = await db.get(checkAgendamentoQuery, checkAgendamentoParams);
     
             if (!agendamento) {
-                return res.status(404).json({ error: 'Agendamento não encontrado' });
+                return res.status(200).json({ status: false, message: 'Agendamento não encontrado' });
             }
 
             const removeQuery = `DELETE FROM agendamentos WHERE id = ?`;
@@ -104,11 +132,11 @@ class AgendamentoController {
             await db.run(removeQuery, removeParams);
             await db.close();
 
-            res.status(200).json({ message: 'Agendamento deletado com sucesso!' });
+            return res.status(200).json({ message: 'Agendamento removido!' });
         } catch (err) {
             await db.close();
             console.error(err.message);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+            return res.status(20).json({ error: 'Erro interno do servidor' });
         }
     }
 }

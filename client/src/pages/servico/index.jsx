@@ -276,10 +276,3 @@ function Servico(props) {
 }
 
 export default Servico;
-
-// barbeiro
-//Dia de folga da cadeira Select
-//checkbox para marcar a hora que trabalha
-
-//agendamento/:cadeiraID/:dia/:mes/:ano
-//servico/:id retornar horas de trabalho e dia de folga
