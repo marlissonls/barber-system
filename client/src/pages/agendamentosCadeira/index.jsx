@@ -5,7 +5,7 @@ import { formatMoeda, formatData, formatHora } from '../../services/formaters';
 import api from "../../services/api";
 
 async function getAgendamentos(user_id) {
-    const response = await api.get(`/agendamento/${user_id}`)
+    const response = await api.get(`/agendamento/barbeiro/${user_id}`)
     return response.data
   }
 
@@ -55,7 +55,7 @@ function AgendamentosCadeira(props) {
             className='agendamento-box flex-column gap-10' 
             key={agendamento.id}
           >
-            <div className='cadeira-title flex-row justify-center'>{agendamento.nome_cadeira}</div>
+            <div className='cadeira-title flex-row justify-center'>{agendamento.nome_usuario}</div>
             <div className='flex-row justify-space-btw'><span>{agendamento.nome_servico}</span><span>{formatMoeda(agendamento.preco_servico)}</span></div>
             <div className='flex-row justify-space-btw'><span>Agendado para: </span><span>{formatData(agendamento.data)} {formatHora(agendamento.hora)}</span></div>
           </div>

@@ -18,6 +18,7 @@ router.post('/login', usuarioController.login)
 router.get('/usuario/:id', usuarioController.get)
 router.put('/usuario/:id', usuarioController.update)
 router.delete('/usuario/:id', usuarioController.remove)
+router.get('/verifica-tipo', auth.verificaTipo)
 
 router.post('/cadeira', cadeiraController.register)
 router.get('/cadeiras', cadeiraController.getAll)
@@ -31,8 +32,8 @@ router.put('/servico/:id', servicoController.update)
 router.delete('/servico/:id', servicoController.remove)
 
 router.post('/agendamento', agendamentoController.register)
-router.get('/agendamento/:userId', agendamentoController.usuarioAgendamentos)
-router.get('/agendamento/:cadeiraId', agendamentoController.cadeiraAgendamentos)
+router.get('/agendamento/cliente/:userId', agendamentoController.usuarioAgendamentos)
+router.get('/agendamento/barbeiro/:userId', agendamentoController.cadeiraAgendamentos)
 router.delete('/agendamento/:id', agendamentoController.remove)
 
 export default router;

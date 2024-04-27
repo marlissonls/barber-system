@@ -6,7 +6,7 @@ import { formatMoeda, formatData, formatHora } from '../../services/formaters';
 import Rodape from "../../components/rodape";
 
 async function getAgendamentos(user_id) {
-  const response = await api.get(`/agendamento/${user_id}`)
+  const response = await api.get(`/agendamento/cliente/${user_id}`)
   return response.data
 }
 

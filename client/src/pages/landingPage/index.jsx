@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { validateName, validateTelefone, validateEmail, validatePassword } from '../../services/validateFields';
-import { set_token, set_id, set_username, set_telefone, set_email, } from '../../services/auth';
+import { set_token, set_id, set_username, set_telefone, set_email, set_tipo, } from '../../services/auth';
 import api from '../../services/api';
 import logo from '../../assets/logo.png';
 
@@ -73,10 +73,12 @@ function LandingPage(props) {
       set_username(response.data.usuario.nome)
       set_telefone(response.data.usuario.telefone)
       set_email(response.data.usuario.email)
+      set_tipo(response.data.usuario.tipo)
       if (response.data.usuario.tipo === 'cliente') {
         navigate('/cadeiras')
       } else {
-        navigate('/admin')
+        console.log(response.data.usuario.tipo, 'login teste')
+        navigate('/barbeiro')
       }
     } else {
       messageError(response.data.message)
@@ -108,15 +110,16 @@ function LandingPage(props) {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('name', username);
+    formData.append('nome', username);
     formData.append('telefone', registerTelefone);
     formData.append('email', registerEmail);
-    formData.append('password', registerPassword);
-
-    const response = await api.post(`/register`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+    formData.append('senha', registerPassword);
+ 
+    const response = await api.post(`/register`, {
+      nome: username,
+      telefone: registerTelefone,
+      email: registerEmail,
+      senha: registerPassword
     })
 
     if (response.data.status) {
@@ -167,7 +170,7 @@ function LandingPage(props) {
         
 
         <span className='login-cadastro-toggle'>
-          Já possui uma conta? <span onClick={() => {handleLoginForm(); handleResgiterForm()}}>Faça Login</span>
+          Ainda não possui conta? <span  onClick={() => {handleLoginForm(); handleResgiterForm()}}>Cadastre-se</span>
         </span>
       </form>}
 
@@ -221,7 +224,7 @@ function LandingPage(props) {
         
 
         <span className='login-cadastro-toggle'>
-          Ainda não possui conta? <span  onClick={() => {handleLoginForm(); handleResgiterForm()}}>Cadastre-se</span>
+          Já possui uma conta? <span onClick={() => {handleLoginForm(); handleResgiterForm()}}>Faça Login</span>
         </span>
       </form>}
     </div>

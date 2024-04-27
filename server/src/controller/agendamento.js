@@ -55,20 +55,26 @@ class AgendamentoController {
     }
 
     async cadeiraAgendamentos(req, res) {
-        const id = req.params.cadeiraId;
+        const userId = req.params.userId;
+
+        const getCadeiraQuery = 'SELECT * FROM cadeiras WHERE usuario_id = ?';
+        const getCadeiraparams = [userId];
 
         const query = `
-            SELECT agendamentos.id, usuarios.nome AS nome_usuario, cadeiras.nome AS nome_cadeira, servicos.id AS id_servico, servicos.nome AS nome_servico, servicos.preco AS preco_servico
+            SELECT agendamentos.id, agendamentos.data, agendamentos.hora, cadeiras.nome AS nome_cadeira, servicos.nome AS nome_servico, servicos.preco AS preco_servico, usuarios.nome AS nome_usuario
             FROM agendamentos
-            INNER JOIN usuarios ON agendamentos.cadeira_id = usuarios.id
+            INNER JOIN usuarios ON agendamentos.usuario_id = usuarios.id
             INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
             INNER JOIN servicos ON agendamentos.servico_id = servicos.id
             WHERE agendamentos.cadeira_id = ? AND agendamentos.status != "concluído"
         `;
-        const params = [id];
-    
+
         const db = await getConnection();
         try {
+            const cadeira = await db.get(getCadeiraQuery, getCadeiraparams)
+            if (!cadeira) return res.status(200).json({ status: false, message: 'Sem permissão.'})
+
+            const params = [cadeira.id];
             const agenda = await db.all(query, params);
             await db.close();
     

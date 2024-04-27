@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
-//import { secret } from "../config/index.js";
-const secret = 'secret'
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 function getTokenFromHeader(req) {
     if (!req.headers.authorization) return null;
@@ -22,6 +23,43 @@ const auth = {
             next();
         });
     },
+    verificaTipo: (req, res) => {
+        const token = getTokenFromHeader(req);
+        if (!token) {
+            return res.status(200).json({ errors: { message: "Não autenticado." } });
+        }
+
+        try {
+            const payload = new Promise((resolve, reject) => {
+                jwt.verify(token, process.env.SECRET, (err, decoded) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(decoded);
+                    }
+                });
+            });
+            return res.status(200).json({ status: true, payload });
+        } catch (error) {
+            return res.status(200).json({ errors: { message: "Não autenticado." } });
+        }
+    },
+    // verificaTipo: (req, res) => {
+    //     const token = getTokenFromHeader(req);
+    //     if (!token) {
+    //         return res.status(200).json({ errors: { message: "Não autenticado." } });
+    //     }
+
+    //     let payload;
+    //     jwt.verify(token, process.env.SECRET, (err, decoded) => {
+    //         if (err) {
+    //             return res.status(200).json({ errors: { message: "Não autenticado." } });
+    //         }
+    //         payload = decoded;
+    //     });
+
+    //     return res.status(200).json({ status: true, payload})
+    // },
     optional: (req, res, next) => {
         const token = getTokenFromHeader(req);
         if (token) {

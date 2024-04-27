@@ -10,15 +10,14 @@ class UsuarioController {
         const { nome, telefone, email, senha } = req.body;
         const hash = await bcrypt.hash(senha, 10);
     
-        const query = 'INSERT INTO usuarios (nome, telefone, email, senha, tipo) VALUES (?, ?, ?, ?)';
+        const query = 'INSERT INTO usuarios (nome, telefone, email, senha) VALUES (?, ?, ?, ?)';
         const params = [nome, telefone, email, hash];
     
         const db = await getConnection();
         try {
             db.run(query, params);
             await db.close();
-            
-            console.log(`Usuário cadastrado.`);
+
             return res.status(200).json({ status: true, message: 'Cadastro realizado!' });  
         } catch (err) {
             await db.close();
@@ -59,7 +58,7 @@ class UsuarioController {
             }
 
             delete usuario.senha;
-            const token = jwt.sign({ id: usuario.id, nome: usuario.nome, email: usuario.email, telefone: usuario.telefone, tipo: usuario.tipo }, 'SEU_SECRET_KEY', { expiresIn: '480h' });
+            const token = jwt.sign({ id: usuario.id, nome: usuario.nome, email: usuario.email, telefone: usuario.telefone, tipo: usuario.tipo }, process.env.SECRET, { expiresIn: '480h' });
             usuario.token = token
 
             return res.status(200).json({ status: true, message: 'Login bem-sucedido', usuario });
