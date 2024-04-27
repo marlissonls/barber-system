@@ -44,22 +44,6 @@ const auth = {
             return res.status(200).json({ errors: { message: "Não autenticado." } });
         }
     },
-    // verificaTipo: (req, res) => {
-    //     const token = getTokenFromHeader(req);
-    //     if (!token) {
-    //         return res.status(200).json({ errors: { message: "Não autenticado." } });
-    //     }
-
-    //     let payload;
-    //     jwt.verify(token, process.env.SECRET, (err, decoded) => {
-    //         if (err) {
-    //             return res.status(200).json({ errors: { message: "Não autenticado." } });
-    //         }
-    //         payload = decoded;
-    //     });
-
-    //     return res.status(200).json({ status: true, payload})
-    // },
     optional: (req, res, next) => {
         const token = getTokenFromHeader(req);
         if (token) {

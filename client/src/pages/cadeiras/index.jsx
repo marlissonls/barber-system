@@ -53,7 +53,7 @@ function Cadeiras(props) {
             navigate(`/cadeira/${item.id}`)
           }}
         >
-          Ver Perfil
+          Ver Serviços
         </button>
       </div>)}
     </div>
