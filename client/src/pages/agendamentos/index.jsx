@@ -5,6 +5,10 @@ import api from "../../services/api";
 import { formatMoeda, formatData, formatHora } from '../../services/formaters';
 import Rodape from "../../components/rodape";
 
+function habilitaCancelarServico(timestamp) {
+  return new Date() < new Date(timestamp)
+}
+
 async function getAgendamentos(user_id) {
   const response = await api.get(`/agendamento/cliente/${user_id}`)
   return response.data
@@ -18,6 +22,10 @@ function Agendamentos() {
 
   function messageError(message) {
     enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'} });
+  }
+
+  function messageSuccess(message) {
+    enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'} });
   }
 
   useEffect(() => {
@@ -46,6 +54,13 @@ function Agendamentos() {
     }
   }, []);
 
+  async function handleCancelarServico(id) {
+    const response = await api.put(`/agendamento/cancelar/${id}`)
+    
+    if (response.data.status) messageSuccess(response.data.message)
+    else messageError(response.data.message)
+  }
+
   return (
     <div className='body flex-column justify-left gap-20'>
       <h2 className='agendamentos-title flex-row justify-center align-center'>Agendamentos</h2>
@@ -59,21 +74,22 @@ function Agendamentos() {
             <div className='cadeira-title flex-row justify-center'>{agendamento.nome_cadeira}</div>
             <div className='flex-row justify-space-btw'><span>{agendamento.nome_servico}</span><span>{formatMoeda(agendamento.preco_servico)}</span></div>
             <div className='flex-row justify-space-btw'><span>Agendado para: </span><span>{formatData(agendamento.data)} {formatHora(agendamento.hora)}</span></div>
+            <div className='flex-row justify-center'>
+              {habilitaCancelarServico(agendamento.data + agendamento.hora * 60 * 60 * 1000) && 
+              <button
+                type='button'
+                className='button2'
+                onClick={() => handleCancelarServico(agendamento.id)}
+              >
+                Cancelar
+              </button>}
+            </div>
           </div>
         ))
       ) : (
         <div>Carregando...</div>
       )}
       </div>
-      {/* <div>
-        <button
-            type='button'
-            className='button w100'
-            onClick={() => navigate(`/cadeiras`)}
-        >
-          Voltar
-        </button>
-      </div> */}
       <Rodape />
     </div>
   );

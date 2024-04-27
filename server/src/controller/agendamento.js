@@ -37,7 +37,7 @@ class AgendamentoController {
             FROM agendamentos
             INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
             INNER JOIN servicos ON agendamentos.servico_id = servicos.id
-            WHERE agendamentos.usuario_id = ? AND agendamentos.status != "concluído"
+            WHERE agendamentos.usuario_id = ? AND agendamentos.status = 'pendente';
         `;
         const params = [userId];
     
@@ -66,7 +66,7 @@ class AgendamentoController {
             INNER JOIN usuarios ON agendamentos.usuario_id = usuarios.id
             INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
             INNER JOIN servicos ON agendamentos.servico_id = servicos.id
-            WHERE agendamentos.cadeira_id = ? AND agendamentos.status != 'concluído'
+            WHERE agendamentos.cadeira_id = ? AND agendamentos.status = 'pendente';
         `;
 
         const db = await getConnection();
@@ -106,6 +106,34 @@ class AgendamentoController {
             await db.close();
 
             return res.status(200).json({ status: true, message: 'Serviço concluído!' });
+        } catch (err) {
+            await db.close();
+            console.error(err.message);
+            return res.status(200).json({ status: false, message: 'Houve uma falha na solicitação' });
+        }
+    }
+
+    async cancelar(req, res) {
+        const id = req.params.id
+
+        const checkAgendamentoQuery = 'SELECT * FROM agendamentos WHERE id = ?';
+        const checkAgendamentoParams = [id];
+
+        const updateQuery = `UPDATE agendamentos SET status='cancelado' WHERE id = ?`;
+        const updateParams = [id];
+
+        const db = await getConnection();
+        try {
+            const agendamento = await db.get(checkAgendamentoQuery, checkAgendamentoParams);
+    
+            if (!agendamento) {
+                return res.status(200).json({ status: false, message: 'Agendamento não encontrado' });
+            }
+
+            await db.run(updateQuery, updateParams);
+            await db.close();
+
+            return res.status(200).json({ status: true, message: 'Serviço cancelado!' });
         } catch (err) {
             await db.close();
             console.error(err.message);

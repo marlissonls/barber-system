@@ -12,36 +12,30 @@ const auth = {
     required: (req, res, next) => {
         const token = getTokenFromHeader(req);
         if (!token) {
-            return res.status(401).json({ errors: { message: "Token JWT não fornecido" } });
+            return res.status(200).json({ status: false, message: "Token JWT não fornecido" });
         }
 
-        jwt.verify(token, secret, (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ errors: { message: "Token JWT inválido" } });
-            }
-            req.payload = decoded;
+        try {
+            const decoded = jwt.verify(token, process.env.SECRET);
+            req.payload = decoded
             next();
-        });
+        } catch (err) {
+            return res.status(200).json({ status: false, message: "Token Inválido" });
+        }
     },
     verificaTipo: (req, res) => {
         const token = getTokenFromHeader(req);
         if (!token) {
-            return res.status(200).json({ errors: { message: "Não autenticado." } });
+            return res.status(200).json({ status: false, message: "Não autenticado." });
         }
 
+        let payload;
         try {
-            const payload = new Promise((resolve, reject) => {
-                jwt.verify(token, process.env.SECRET, (err, decoded) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(decoded);
-                    }
-                });
-            });
+            const decoded = jwt.verify(token, process.env.SECRET);
+            payload = decoded
             return res.status(200).json({ status: true, payload });
-        } catch (error) {
-            return res.status(200).json({ errors: { message: "Não autenticado." } });
+        } catch (err) {
+            return res.status(200).json({ status: false, message: "Não autenticado" });
         }
     },
     optional: (req, res, next) => {

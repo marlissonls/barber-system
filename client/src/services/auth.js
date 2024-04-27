@@ -70,20 +70,17 @@ function isAuthenticated() {
     return false;
 }
 
-function isBarbeiro() {
-    if (get_tipo() === 'barbeiro') return true;
-    return false;
-}
-
-// async function isBarbeiro() {
-//     // return get_tipo() === 'barbeiro'
-//     // const response = await api.get(`/verifica-tipo`)
-
-//     // if (response.data.payload.tipo === 'barbeiro') return true
-//     console.log(get_tipo())
-//     if (get_tipo() === 'barbeiro') return true
-//     return false
+// function isBarbeiro() {
+//     if (get_tipo() === 'barbeiro') return true;
+//     return false;
 // }
+
+async function isBarbeiro() {
+    const response = await api.get(`/verifica-tipo`)
+    console.log(response.data)
+    if (response.data.payload.tipo === 'barbeiro') return true
+    return false
+}
 
 function logout() {
     localStorage.removeItem(TOKEN);

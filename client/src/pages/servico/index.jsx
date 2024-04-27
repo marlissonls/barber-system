@@ -104,7 +104,7 @@ function Servico(props) {
   const [dia, setDia] = useState(new Date().getDate());
   const [mes, setMes] = useState(new Date().getMonth());
   const [ano, setAno] = useState(new Date().getFullYear());
-  const [hoje, setHoje] = useState(new Date().getDate());
+  const [hoje] = useState(new Date().getDate());
   const [horaSelecionada, setHoraSelecionada] = useState(undefined);
 
   const calendario = calendarioFunction(mes, ano);
@@ -122,6 +122,13 @@ function Servico(props) {
 			}
 		}
 	}
+
+  horariosDisponiveis = horariosDisponiveis.filter(hora => {
+    let data = new Date(ano, mes, dia)
+    data.setTime(data.getTime() + Number(hora) * 60 * 60 *1000)
+    
+    return data >= new Date()
+  })
 
   useEffect(() => {
     async function fetchServicoInfo() {

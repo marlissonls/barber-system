@@ -15,8 +15,8 @@ const router = createBrowserRouter([
         path: "/",
         element: <LandingPage />,
         loader: async () => {
-        if (isAuthenticated() && !isBarbeiro()) throw new redirect("/cadeiras");
-        if (isAuthenticated() && isBarbeiro()) throw new redirect("/barbeiro");
+        if (isAuthenticated() && !(await isBarbeiro())) throw new redirect("/cadeiras");
+        if (isAuthenticated() && await isBarbeiro()) throw new redirect("/barbeiro");
         return {}
         }
     },
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
         element: <Cadeiras />,
         loader: async () => {
         if (!isAuthenticated()) throw new redirect("/");
-        if (isBarbeiro()) throw new redirect("/barbeiro");
+        if (await isBarbeiro()) throw new redirect("/barbeiro");
         return {}
         }
     },
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
         element: <Cadeira />,
         loader: async () => {
         if (!isAuthenticated()) throw new redirect("/");
-        if (isBarbeiro()) throw new redirect("/barbeiro");
+        if (await isBarbeiro()) throw new redirect("/barbeiro");
         return {}
         }
     },
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
         element: <Servico />,
         loader: async () => {
         if (!isAuthenticated()) throw new redirect("/");
-        if (isBarbeiro()) throw new redirect("/barbeiro");
+        if (await isBarbeiro()) throw new redirect("/barbeiro");
         return {}
         }
     },
@@ -52,7 +52,7 @@ const router = createBrowserRouter([
         element: <Agendamentos />,
         loader: async () => {
         if (!isAuthenticated()) throw new redirect("/");
-        if (isBarbeiro()) throw new redirect("/barbeiro");
+        if (await isBarbeiro()) throw new redirect("/barbeiro");
         return {}
         }
     },
@@ -61,7 +61,7 @@ const router = createBrowserRouter([
         element: <AgendamentosCadeira />,
         loader: async () => {
         if (!isAuthenticated()) throw new redirect("/");
-        if (!isBarbeiro()) throw new redirect("/cadeiras");
+        if (!(await isBarbeiro())) throw new redirect("/cadeiras");
         return {}
         }
     },
