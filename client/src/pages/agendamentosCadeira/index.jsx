@@ -3,13 +3,10 @@ import { useSnackbar } from "notistack";
 import { get_id } from "../../services/auth";
 import { formatMoeda, formatData, formatHora } from '../../services/formaters';
 import api from "../../services/api";
+import Rodape from "../../components/rodapeCadeira";
 
 function habilitaConclusaoServico(timestamp) {
   return new Date() > new Date(timestamp)
-}
-
-function habilitaCancelarServico(timestamp) {
-  return new Date() < new Date(timestamp)
 }
 
 async function getAgendamentos(user_id) {
@@ -24,11 +21,11 @@ function AgendamentosCadeira(props) {
   const { enqueueSnackbar } = useSnackbar();
 
   function messageError(message) {
-    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'} });
+    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'}, autoHideDuration: 2000 });
   }
 
   function messageSuccess(message) {
-    enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'} });
+    enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'}, autoHideDuration: 2000 });
   }
 
   async function fetchAgendamentosData(user_id) {
@@ -123,6 +120,7 @@ function AgendamentosCadeira(props) {
         <div>Carregando...</div>
       )}
       </div>
+      <Rodape />
     </div>
   );
 }

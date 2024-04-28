@@ -11,11 +11,11 @@ function LandingPage(props) {
   const { enqueueSnackbar } = useSnackbar();
 
   function messageError(message) {
-    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'} });
+    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'}, autoHideDuration: 2000 });
   }
 
   function messageSuccess(message) {
-    enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'} });
+    enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'}, autoHideDuration: 2000 });
   }
 
   /////////////////////////////
@@ -77,7 +77,6 @@ function LandingPage(props) {
       if (response.data.usuario.tipo === 'cliente') {
         navigate('/cadeiras')
       } else {
-        console.log(response.data.usuario.tipo, 'login teste')
         navigate('/barbeiro')
       }
     } else {

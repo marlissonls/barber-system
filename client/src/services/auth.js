@@ -75,11 +75,19 @@ function isAuthenticated() {
 //     return false;
 // }
 
+async function isCliente() {
+    const response = await api.get(`/verifica-tipo`)
+    return response.data.payload.tipo === 'cliente'
+}
+
 async function isBarbeiro() {
     const response = await api.get(`/verifica-tipo`)
-    console.log(response.data)
-    if (response.data.payload.tipo === 'barbeiro') return true
-    return false
+    return response.data.payload.tipo === 'barbeiro'
+}
+
+async function isAdmin() {
+    const response = await api.get(`/verifica-tipo`)
+    return response.data.payload.tipo === 'admin'
 }
 
 function logout() {
@@ -89,7 +97,6 @@ function logout() {
     localStorage.removeItem(PHONE);
     localStorage.removeItem(EMAIL);
     localStorage.removeItem(TIPO);
-    // localStorage.removeItem(PHOTO);
 }
 
 export {
@@ -110,6 +117,8 @@ export {
     get_position,
     set_position,
     isAuthenticated,
+    isCliente,
     isBarbeiro,
+    isAdmin,
     logout,
 }

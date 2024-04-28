@@ -30,8 +30,26 @@ class CadeiraController {
         }
     }
 
+    async get(req, res) {
+        const barbeiroId = req.payload.id;
+
+        const cadeiraQuery = 'SELECT * FROM cadeiras WHERE usuario_id = ?';
+        const cadeiraParams = [barbeiroId];
+
+        const db = await getConnection();
+        try {
+            const cadeira = await db.get(cadeiraQuery, cadeiraParams);
+            await db.close();
+
+            return res.status(200).json({ status: true, cadeira });
+        } catch (err) {
+            console.error(err.message);
+            return res.status(200).json({ status: true, message: 'Houve um erro na solicitação' });
+        }
+    };
+
     async getAll(req, res) {
-        const query = 'SELECT * FROM cadeiras';
+        const query = "SELECT * FROM cadeiras WHERE status = 'livre'";
 
         const db = await getConnection();
         try {
@@ -71,11 +89,11 @@ class CadeiraController {
     }
 
     async  update(req, res) {
-        const id = req.params.id;
-        const { nome, status } = req.body;
+        const userId = req.payload.id
+        const { nome, status, horario } = req.body;
 
-        const checkCadeiraQuery = 'SELECT * FROM cadeiras WHERE id = ?';
-        const checkCadeiraParams = [id];
+        const checkCadeiraQuery = 'SELECT * FROM cadeiras WHERE usuario_id = ?';
+        const checkCadeiraParams = [userId];
 
         let updateFields = '';
         const updateParams = [];
@@ -90,24 +108,32 @@ class CadeiraController {
             updateParams.push(status);
         }
 
-        updateFields = updateFields.slice(0, -2);
+        if (horario) {
+            updateFields += `${horario} = ?, `;
+        }
 
-        const updateQuery = `UPDATE cadeiras SET ${updateFields} WHERE id = ?`;
-        updateParams.push(id);
+        updateFields = updateFields.slice(0, -2);
         
         const db = await getConnection();
         try {
-
             const cadeira = await db.get(checkCadeiraQuery, checkCadeiraParams);
-
             if (!cadeira) {
                 return res.status(200).json({ status: false, message: 'Cadeira não encontrada.' });
             }
 
+            if (horario) {
+                const valor = cadeira[horario]
+                const mudarValor = valor ? 0 : 1
+                updateParams.push(mudarValor)
+            }
+
+            const updateQuery = `UPDATE cadeiras SET ${updateFields} WHERE usuario_id = ?`;
+            updateParams.push(userId);
+
             await db.run(updateQuery, updateParams);
             await db.close();
 
-            res.status(200).json({ status: true, message: 'Dados atualizados com sucesso!' });
+            res.status(200).json({ status: true, message: 'Atualizado!' });
         } catch (err) {
             await db.close();
             console.error(err.message);
