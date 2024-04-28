@@ -4,11 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../services/auth';
 
 const links = [
-    { to: '/cadeiras', text: 'Sobre Nós', icon: faChair },
-    { to: '/agendamentos', text: 'Modelos', icon: faClock },
+    { to: '/barbeiro/configs', text: 'Sobre Nós', icon: faChair },
+    { to: '/barbeiro', text: 'Modelos', icon: faClock },
 ];
 
-function Rodape() {
+function RodapeCadeira() {
     const navigate = useNavigate()
 
     const handleLogout = () => {
@@ -38,4 +38,4 @@ function Rodape() {
     )
 }
 
-export default Rodape;
+export default RodapeCadeira;

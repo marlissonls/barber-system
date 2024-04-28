@@ -23,9 +23,10 @@ router.delete('/usuario/:id', auth.required, usuarioController.remove)
 router.get('/verifica-tipo', auth.verificaTipo)
 
 router.post('/cadeira', auth.required, cadeiraController.register)
+router.get('/cadeira', auth.required, cadeiraController.get)
 router.get('/cadeiras', auth.required, cadeiraController.getAll)
 router.get('/cadeira/:id', auth.required, cadeiraController.getServicos)
-router.put('/cadeira/:id', auth.required, cadeiraController.update)
+router.put('/cadeira', auth.required, cadeiraController.update)
 router.delete('/cadeira/:id', auth.required, cadeiraController.remove)
 
 router.post('/servico', auth.required, servicoController.register)

@@ -17,6 +17,10 @@
     flex-direction: row;
 }
 
+.gap-5 {
+    gap: 5px;
+}
+
 .gap-10 {
     gap: 10px;
 }
@@ -309,6 +313,32 @@ th:last-child, td:last-child {
 .cadeira-title {
     font-weight: bold;
     font-size: 17px;
+}
+
+/* CADEIRA CONFIGURAÇOES */
+
+.ativar-cadeira-box {
+    padding: 10px 15px;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.selecionar-horarios-box {
+    padding: 20px 10px;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 20px;
+    column-gap: 30px;
+}
+
+.cadeira-title-config {
+    color: #fff;
+    text-align: center
 }
 
 /* RODAPE */

@@ -17,7 +17,7 @@ function Cadeiras(props) {
   const { enqueueSnackbar } = useSnackbar();
 
   function messageError(message) {
-    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'} });
+    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'}, autoHideDuration: 2000 });
   }
 
   useEffect(() => {

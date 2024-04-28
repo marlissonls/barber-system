@@ -86,15 +86,15 @@ const meses = {
 };
 
 function Servico(props) {
+  const { enqueueSnackbar } = useSnackbar();
+  
   function messageError(message) {
-    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'},autoHideDuration: 2000});
+    enqueueSnackbar(message, { variant: "error", style: {fontFamily: 'Arial'}, autoHideDuration: 2000});
   }
   
   function messageSuccess(message) {
     enqueueSnackbar(message, { variant: "success", style: {fontFamily: 'Arial'}, autoHideDuration: 1000});
   }
-
-  const { enqueueSnackbar } = useSnackbar();
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -151,7 +151,7 @@ function Servico(props) {
   }, [id]);
 
   async function handleFinalizarAgendamento() {
-    if (horaSelecionada === null) return messageError('Selecione um dia e horário.');
+    if (horaSelecionada === undefined) return messageError('Selecione um dia e horário.');
 
     const dataSelecionada = new Date(ano, mes, dia);
     const dataTimestamp = dataSelecionada.getTime();
