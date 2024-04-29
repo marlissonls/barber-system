@@ -7,7 +7,9 @@ import Cadeira from "./pages/cadeira";
 import Servico from "./pages/servico";
 import Agendamentos from "./pages/agendamentos";
 import AgendamentosCadeira from "./pages/agendamentosCadeira";
-import CadeiraConfigs from "./pages/CadeiraConfigs";
+import CadeiraConfigs from "./pages/cadeiraConfigs";
+import GerenteCadeiras from "./pages/gerenteCadeiras";
+import GerenteCadeiraAgendamentos from './pages/gerenteAgendamentos';
 import { isAuthenticated, isCliente, isBarbeiro, isAdmin } from "./services/auth";
 
 const router = createBrowserRouter([
@@ -83,7 +85,17 @@ const router = createBrowserRouter([
     },
     {
         path: "/gerente",
-        element: <AgendamentosCadeira />,
+        element: <GerenteCadeiras />,
+        loader: async () => {
+        if (!isAuthenticated()) throw new redirect("/");
+        if (await isCliente()) throw new redirect("/cadeiras");
+        if (await isBarbeiro()) throw new redirect("/barbeiro");
+        return {}
+        }
+    },
+    {
+        path: "/gerente/cadeira/:cadeiraId",
+        element: <GerenteCadeiraAgendamentos />,
         loader: async () => {
         if (!isAuthenticated()) throw new redirect("/");
         if (await isCliente()) throw new redirect("/cadeiras");

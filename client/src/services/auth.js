@@ -87,7 +87,7 @@ async function isBarbeiro() {
 
 async function isAdmin() {
     const response = await api.get(`/verifica-tipo`)
-    return response.data.payload.tipo === 'admin'
+    return response.data.payload.tipo === 'gerente'
 }
 
 function logout() {
