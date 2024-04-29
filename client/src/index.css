@@ -78,6 +78,7 @@
 }
 
 .page-title {
+    padding: 30px 10px;
     color: #fff
 }
 
@@ -296,12 +297,12 @@ th:last-child, td:last-child {
 
 .agendamentos-title {
     color: #fff;
-    height: 60px;
+    height: 40px;
 }
 
 .adendamentos-body {
     overflow-y: auto;
-    height: 80%;
+    height: 70%;
 }
 
 .agendamento-box {
@@ -339,6 +340,21 @@ th:last-child, td:last-child {
 .cadeira-title-config {
     color: #fff;
     text-align: center
+}
+
+/* GERENTE */
+
+.input-date-box {
+    padding: 10px 10px;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.input-date {
+    width: 200px;
+    height: 30px;
+    border-radius: 7px;
+    text-align: center;
 }
 
 /* RODAPE */

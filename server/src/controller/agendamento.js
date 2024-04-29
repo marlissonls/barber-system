@@ -54,7 +54,7 @@ class AgendamentoController {
         }
     }
 
-    async cadeiraAgendamentos(req, res) {
+    async barbeiroAgendamentos(req, res) {
         const userId = req.params.userId;
 
         const getCadeiraQuery = 'SELECT * FROM cadeiras WHERE usuario_id = ?';
@@ -81,6 +81,37 @@ class AgendamentoController {
             return res.status(200).json({ status: true, data: agenda });
         } catch (err) {
             console.error(err.message);
+            return res.status(200).json({ status: false, message: 'Falha ao buscar agendamentos' });
+        }
+    }
+
+    async cadeiraAgendamentos(req, res) {
+        const { cadeiraId, data } = req.params;
+
+        const getCadeiraQuery = 'SELECT * FROM cadeiras WHERE id = ?';
+        const getCadeiraparams = [cadeiraId];
+
+        const query = `
+            SELECT agendamentos.id, agendamentos.data, agendamentos.hora, agendamentos.status, cadeiras.id As cadeira_id, cadeiras.nome AS nome_cadeira, servicos.nome AS nome_servico, servicos.preco AS preco_servico, usuarios.nome AS nome_usuario
+            FROM agendamentos
+            INNER JOIN usuarios ON agendamentos.usuario_id = usuarios.id
+            INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
+            INNER JOIN servicos ON agendamentos.servico_id = servicos.id
+            WHERE agendamentos.cadeira_id = ? AND  data = ? AND agendamentos.status = 'concluído';
+        `;
+        const params = [cadeiraId, data];
+
+        const db = await getConnection();
+        try {
+            const cadeira = await db.get(getCadeiraQuery, getCadeiraparams)
+            if (!cadeira) return res.status(200).json({ status: false, message: 'Cadeira não registrada.'})
+
+            const agenda = await db.all(query, params);
+            await db.close();
+    
+            return res.status(200).json({ status: true, data: agenda });
+        } catch (err) {
+            console.error(err);
             return res.status(200).json({ status: false, message: 'Falha ao buscar agendamentos' });
         }
     }
