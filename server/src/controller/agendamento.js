@@ -86,7 +86,7 @@ class AgendamentoController {
     }
 
     async cadeiraAgendamentos(req, res) {
-        const cadeiraId = req.params.cadeiraId;
+        const { cadeiraId, data } = req.params;
 
         const getCadeiraQuery = 'SELECT * FROM cadeiras WHERE id = ?';
         const getCadeiraparams = [cadeiraId];
@@ -97,21 +97,21 @@ class AgendamentoController {
             INNER JOIN usuarios ON agendamentos.usuario_id = usuarios.id
             INNER JOIN cadeiras ON agendamentos.cadeira_id = cadeiras.id
             INNER JOIN servicos ON agendamentos.servico_id = servicos.id
-            WHERE agendamentos.cadeira_id = ? AND agendamentos.status = 'concluído';
+            WHERE agendamentos.cadeira_id = ? AND  data = ? AND agendamentos.status = 'concluído';
         `;
+        const params = [cadeiraId, data];
 
         const db = await getConnection();
         try {
             const cadeira = await db.get(getCadeiraQuery, getCadeiraparams)
             if (!cadeira) return res.status(200).json({ status: false, message: 'Cadeira não registrada.'})
 
-            const params = [cadeiraId];
             const agenda = await db.all(query, params);
             await db.close();
     
             return res.status(200).json({ status: true, data: agenda });
         } catch (err) {
-            console.error(err.message);
+            console.error(err);
             return res.status(200).json({ status: false, message: 'Falha ao buscar agendamentos' });
         }
     }

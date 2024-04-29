@@ -1,17 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import { get_id } from "../../services/auth";
 import { formatMoeda, formatData, formatHora } from '../../services/formaters';
 import api from "../../services/api";
-import Rodape from "../../components/rodapeCadeira";
+import RodapeGerente from "../../components/rodapeGerente";
 
-function habilitaConclusaoServico(timestamp) {
-  return new Date() > new Date(timestamp)
-}
-
-async function getAgendamentos(cadeiraId) {
-    const response = await api.get(`/agendamento/gerente/${cadeiraId}`)
+async function getAgendamentos(cadeiraId, dia) {
+    const response = await api.get(`/agendamento/gerente/${cadeiraId}/${dia}`)
     return response.data
   }
 
@@ -28,10 +23,11 @@ function GerenteCadeiraAgendamentos(props) {
 
   const refLoading = useRef(false)
   const [data, setData] = useState([]);
+  const [diaSelecionadoInicio, setDiaSelecionado] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));
 
-  async function fetchAgendamentosData(cadeiraId) {
+  async function fetchAgendamentosData(cadeiraId, dia) {
     try {
-      const response = await getAgendamentos(cadeiraId);
+      const response = await getAgendamentos(cadeiraId, dia);
       if (response.status) {
         setData(response.data);
       } else {
@@ -50,45 +46,27 @@ function GerenteCadeiraAgendamentos(props) {
   useEffect(() => {
     if (!refLoading.current) {
       refLoading.current = true;
-      fetchAgendamentosData(cadeiraId);
+      if (diaSelecionadoInicio) {
+        fetchAgendamentosData(cadeiraId, diaSelecionadoInicio.getTime());
+      } else return;
     }
-  }, [cadeiraId]);
-
-  async function handleConcluirServico(id) {
-    const response = await api.put(`/agendamento/concluir/${id}`)
-    
-    if (response.data.status) {
-      const user_id = get_id();
-      if (user_id === "null") return;
-
-      if (!refLoading.current) {
-        refLoading.current = true;
-        fetchAgendamentosData(user_id);
-      } 
-      messageSuccess(response.data.message)
-    } else messageError(response.data.message)
-  }
-
-  async function handleCancelarServico(id) {
-    const response = await api.put(`/agendamento/cancelar/${id}`)
-    
-    if (response.data.status) {
-      const user_id = get_id();
-      if (user_id === "null") return;
-
-      if (!refLoading.current) {
-        refLoading.current = true;
-        fetchAgendamentosData(user_id);
-      } 
-      messageSuccess(response.data.message)
-    } else messageError(response.data.message)
-  }
+  }, [cadeiraId, diaSelecionadoInicio]);
 
   return (
     <div className='body flex-column justify-left gap-20'>
       <h2 className='agendamentos-title flex-row justify-center align-center'>Agenda {data.length > 0 ? data[0].nome_cadeira : ''}</h2>
-      <div className='adendamentos-body flex-column gap-20'>
-      {data ? (
+      <div className='input-date-box flex-column align-center gap-10'>
+        <label htmlFor="data">Selecione a data:</label>
+        <input 
+          className='input-date'
+          type="date" 
+          id="data" 
+          name="data" 
+          value={diaSelecionadoInicio.toISOString().substr(0, 10)} 
+          onChange={(event) => {setDiaSelecionado(new Date(`${event.target.value} `))}} />
+      </div>
+      <div className='adendamentos-body flex-column gap-20 adendamentos-body'>
+      {data.length > 0 ? (
         data.map(agendamento => (
           <div 
             className='agendamento-box flex-column gap-10' 
@@ -101,22 +79,12 @@ function GerenteCadeiraAgendamentos(props) {
           </div>
         ))
       ) : (
-        <div>Carregando...</div>
+        <div className='agendamento-box flex-column gap-10'>Carregando...</div>
       )}
       </div>
-      <Rodape />
+      <RodapeGerente />
     </div>
   );
 }
 
 export default GerenteCadeiraAgendamentos;
-
-
-
-// async function handleGetAgenda(cadeiraId) {
-//     try{
-//         const response = await api.get(`/agendamentos/${cadeiraId}`)
-//     } catch (err) {
-//         console.error(err)
-//     }
-//   }

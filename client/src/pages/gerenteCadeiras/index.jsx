@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import api from "../../services/api";
-// import Rodape from "../../components/rodape";
+import RodapeGerente from "../../components/rodapeGerente";
 
 async function getCadeirasInfo() {
   const response = await api.get(`/cadeiras`)
@@ -42,7 +42,7 @@ function Cadeiras(props) {
     <div className='flex-column align-center'>
       <h2 className='page-title'>Agendas por cadeira</h2>
     </div>
-    <div className='flex-column gap-30 align-center' style={{marginTop: '50px'}}>
+    <div className='flex-column gap-30 align-center'>
       {data.map(item => <div className='cadeira-box flex-column gap-20 align-center justify-center' key={item.id}>
         <h3>{item.nome}</h3>
         <button
@@ -54,7 +54,7 @@ function Cadeiras(props) {
         </button>
       </div>)}
     </div>
-    {/* <Rodape /> */}
+    <RodapeGerente />
   </div>
 }
 

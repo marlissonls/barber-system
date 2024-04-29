@@ -98,14 +98,13 @@ function AgendamentosCadeira(props) {
             <div className='flex-row justify-space-btw'><span>{agendamento.nome_servico}</span><span>{formatMoeda(agendamento.preco_servico)}</span></div>
             <div className='flex-row justify-space-btw'><span>Agendado para: </span><span>{formatData(agendamento.data)} {formatHora(agendamento.hora)}</span></div>
             <div className='flex-row justify-center gap-30'>
-              {habilitaConclusaoServico(agendamento.data + agendamento.hora * 60 * 60 * 1000) && 
               <button
                 type='button'
                 className='button2'
                 onClick={() => handleConcluirServico(agendamento.id)}
               >
                 Concluir
-              </button>}
+              </button>
               <button
                 type='button'
                 className='button2'
