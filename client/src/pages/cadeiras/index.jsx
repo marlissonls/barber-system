@@ -38,11 +38,8 @@ function Cadeiras(props) {
     fetchCadeirasInfo()
   }, []);
 
-  return <div className='body'>
-    <div className='flex-column align-center'>
-      <h2 className='page-title'>Selecione uma cadeira</h2>
-      <h2 className='page-title'>e agende um horário</h2>
-    </div>
+  return <div className='body '>
+    <h2 className='page-title'>Selecione uma cadeira e agende um horário</h2>
     <div className='flex-column gap-30 align-center' style={{marginTop: '50px'}}>
       {data.map(item => <div className='cadeira-box flex-column gap-20 align-center justify-center' key={item.id}>
         <h3>{item.nome}</h3>

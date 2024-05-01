@@ -9,12 +9,25 @@ class UsuarioController {
     async register(req, res) {
         const { nome, telefone, email, senha } = req.body;
         const hash = await bcrypt.hash(senha, 10);
+
+        const getUserByEmailquery = 'SELECT * FROM usuarios WHERE email = ?';
+        const getUserByEmailparams = [email]
+        
+        const getUserByTelefonequery = 'SELECT * FROM usuarios WHERE telefone = ?';
+        const getUserByTelefoneparams = [telefone]
     
         const query = 'INSERT INTO usuarios (nome, telefone, email, senha) VALUES (?, ?, ?, ?)';
         const params = [nome, telefone, email, hash];
     
         const db = await getConnection();
         try {
+            let usuario;
+            usuario = await db.get(getUserByEmailquery, getUserByEmailparams)
+            if (usuario) return res.status(200).json({ status: false, message: 'Este email já sendo utilizado!'})
+
+            usuario = await db.get(getUserByTelefonequery, getUserByTelefoneparams)
+            if (usuario) return res.status(200).json({ status: false, message: 'Este telefone já sendo utilizado!'})
+
             db.run(query, params);
             await db.close();
 

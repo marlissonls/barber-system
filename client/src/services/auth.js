@@ -70,25 +70,36 @@ function isAuthenticated() {
     return false;
 }
 
-// function isBarbeiro() {
-//     if (get_tipo() === 'barbeiro') return true;
-//     return false;
-// }
-
 async function isCliente() {
-    const response = await api.get(`/verifica-tipo`)
-    return response.data.payload.tipo === 'cliente'
+    try {
+        const response = await api.get(`/verifica-tipo`);
+        return response.data.payload.tipo === 'cliente';
+    } catch (error) {
+        console.error('Erro ao verificar tipo de cliente:', error);
+        return false;
+    }
 }
 
 async function isBarbeiro() {
-    const response = await api.get(`/verifica-tipo`)
-    return response.data.payload.tipo === 'barbeiro'
+    try {
+        const response = await api.get(`/verifica-tipo`);
+        return response.data.payload.tipo === 'barbeiro';
+    } catch (error) {
+        console.error('Erro ao verificar tipo de barbeiro:', error);
+        return false;
+    }
 }
 
 async function isAdmin() {
-    const response = await api.get(`/verifica-tipo`)
-    return response.data.payload.tipo === 'gerente'
+    try {
+        const response = await api.get(`/verifica-tipo`);
+        return response.data.payload.tipo === 'gerente';
+    } catch (error) {
+        console.error('Erro ao verificar tipo de admin:', error);
+        return false;
+    }
 }
+
 
 function logout() {
     localStorage.removeItem(TOKEN);
