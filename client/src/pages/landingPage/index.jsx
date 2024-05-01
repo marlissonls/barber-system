@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import { validateName, validateTelefone, validateEmail, validatePassword } from '../../services/validateFields';
 import { set_token, set_id, set_username, set_telefone, set_email, set_tipo, } from '../../services/auth';
 import api from '../../services/api';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo.jpg';
 
 function LandingPage(props) {
 
@@ -132,7 +132,7 @@ function LandingPage(props) {
 
   /////////////////////////////
 
-  return <div className='body'>
+  return <div className='body flex-column gap-20'>
     <div className='logo-box vha-center'>
       <img className='logo' src={logo} alt='Logo' />
     </div>
