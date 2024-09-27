@@ -1,0 +1,42 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "build": "cross-env NODE_ENV=production pm2 start index.js --name=\"barber-system-api\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marlissonls/barber-system.git"
+  },
+  "type": "module",
+  "keywords": [
+    "api",
+    "barber",
+    "back-end"
+  ],
+  "author": "Marlisson Silva",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marlissonls/barber-system/issues"
+  },
+  "homepage": "https://github.com/marlissonls/barber-system#readme",
+  "dependencies": {
+    "@hapi/joi-date": "^2.0.1",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.3",
+    "mongoose-paginate": "^5.0.3",
+    "mongoose-unique-validator": "^5.0.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.7"
+  }
+}
